@@ -1,0 +1,15 @@
+{
+  "expected_profit": {
+    "A": [["Object"], ["Object"]],
+    "B": [["Object"], ["Object"]],
+    "C": [["Object"], ["Object"]],
+    "D": [["Object"], ["Object"]]
+  },
+  "recommendations": {
+    "A": [["Object"], ["Object"]],
+    "B": [["Object"], ["Object"]],
+    "C": [["Object"], ["Object"]],
+    "D": [["Object"], ["Object"]]
+  },
+  "status": "success"
+}

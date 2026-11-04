@@ -1,0 +1,34 @@
+{
+  "app_name": "कृषि नेत्र",
+  "app_name_capitalized": "कृषि-नेत्र",
+  "hello": "नमस्ते",
+  "plan_your_farm_with_krishi_netra": "कृषि नेत्र के साथ अपने फार्म की योजना बनाएं",
+  "plan_your_farm": "फार्म की योजना बनाएं",
+  "prepare_your_farm_strategically": "खेत को रणनीतिक रूप से तैयार करें",
+  "farm_planner": "फार्म प्लानर",
+  "upcoming_alerts": "आने वाले अलर्ट",
+  "Schemes for You": "आपके लिए योजनाएँ",
+  "Nothing to display here": "यहां दिखाने के लिए कुछ नहीं है",
+
+  "profile_title": "प्रोफ़ाइल",
+
+  "profile_user_default_name": "उपयोगकर्ता नाम",
+  "profile_role_farmer": "🌾 किसान",
+  "profile_role_app_user": "ऐप उपयोगकर्ता",
+
+  "profile_stats_farms": "खेत",
+  "profile_stats_crops": "फ़सलें",
+  "profile_stats_success": "सफलता",
+
+  "profile_section_settings": "सेटिंग्स",
+  "profile_section_quick_actions": "त्वरित कार्य",
+
+  "profile_action_view_farm_title": "अपना खेत देखें",
+  "profile_action_view_farm_subtitle": "अपने खेत का लेआउट देखें",
+
+  "profile_action_edit_profile": "प्रोफ़ाइल संपादित करें",
+  "profile_action_notifications": "सूचनाएँ",
+  "profile_action_privacy_security": "गोपनीयता और सुरक्षा",
+
+  "profile_action_logout": "लॉग आउट"
+}

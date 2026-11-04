@@ -1,0 +1,34 @@
+{
+  "app_name": "Krishi Netra",
+  "app_name_capitalized": "KRISHI-NETRA",
+  "hello": "Hello",
+  "plan_your_farm_with_krishi_netra": "Plan Your Farm With Krishi Netra",
+  "plan_your_farm": "Plan Your Farm",
+  "prepare_your_farm_strategically": "Prepare your farm strategically",
+  "farm_planner": "Farm Planner",
+  "upcoming_alerts": "Upcoming Alerts",
+  "Schemes for You": "Schemes for You",
+  "Nothing to display here": "Nothing to display here",
+
+  "profile_title": "Profile",
+
+  "profile_user_default_name": "User Name",
+  "profile_role_farmer": "🌾 Farmer",
+  "profile_role_app_user": "App User",
+
+  "profile_stats_farms": "Farms",
+  "profile_stats_crops": "Crops",
+  "profile_stats_success": "Success",
+
+  "profile_section_settings": "Settings",
+  "profile_section_quick_actions": "Quick Actions",
+
+  "profile_action_view_farm_title": "View your Farm",
+  "profile_action_view_farm_subtitle": "Visualise your farm layout",
+
+  "profile_action_edit_profile": "Edit Profile",
+  "profile_action_notifications": "Notifications",
+  "profile_action_privacy_security": "Privacy & Security",
+
+  "profile_action_logout": "Log out"
+}
