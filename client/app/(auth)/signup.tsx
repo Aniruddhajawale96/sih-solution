@@ -1,23 +1,18 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Platform,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform, Alert } from "react-native";
 import { useState } from "react";
 import { Link } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useSignUp } from "@clerk/clerk-expo";
 import { AuthInput } from "@/components/auth/AuthInput";
-import { supabase } from "@/lib/services/supabase";
 
 export default function SignupScreen() {
+  const { signUp, setActive, isLoaded } = useSignUp();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [pendingVerification, setPendingVerification] = useState(false);
+  const [code, setCode] = useState("");
 
   const [firstName, setFirstName] = useState("");
-  const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dob, setDob] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -37,7 +32,7 @@ export default function SignupScreen() {
 
   const validateStep1 = () => {
     if (!firstName || !lastName || !dob || !mobile || !address || !email || !password) {
-      alert("Please fill all required fields in Step 1");
+      Alert.alert("Please fill all required fields in Step 1");
       return false;
     }
     return true;
@@ -45,75 +40,84 @@ export default function SignupScreen() {
 
   const validateStep2 = () => {
     if (!accountHolder || !accountNo || !ifsc || !bankName || !branchName) {
-      alert("Please fill all required bank details");
+      Alert.alert("Please fill all required bank details");
       return false;
     }
     return true;
   };
 
   const submitAll = async () => {
+    if (!isLoaded) return;
+    if (!validateStep1() || !validateStep2()) return;
+    setLoading(true);
     try {
-      if (!validateStep1() || !validateStep2()) return;
-
-      setLoading(true);
-
-      const { data, error } = await supabase.auth.signUp({
-        email,
+      await signUp.create({
+        emailAddress: email,
         password,
+        firstName,
+        lastName,
       });
-
-      if (error) {
-        alert(error.message);
-        return;
-      }
-
-      const userId = data.user?.id;
-      if (!userId) throw new Error("User ID missing");
-
-      const { error: farmerError } = await supabase.from("farmers").insert({
-        id: userId,
-        first_name: firstName,
-        middle_name: middleName,
-        last_name: lastName,
-        dob: dob?.toISOString(),
-        mobile,
-        address,
-      });
-
-      if (farmerError) throw farmerError;
-
-      const { error: bankError } = await supabase.from("bank_accounts").insert({
-        user_id: userId,
-        account_holder: accountHolder,
-        account_no: accountNo,
-        ifsc,
-        bank_name: bankName,
-        branch_name: branchName,
-      });
-
-      if (bankError) throw bankError;
-
-      alert("Signup successful 🎉 Please verify your email.");
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      setPendingVerification(true);
     } catch (err: any) {
-      console.error(err);
-      alert(err.message || "Signup failed");
+      Alert.alert("Signup failed", err.errors?.[0]?.message || err.message);
     } finally {
       setLoading(false);
     }
   };
 
+  const onVerify = async () => {
+    if (!isLoaded) return;
+    setLoading(true);
+    try {
+      const result = await signUp.attemptEmailAddressVerification({ code });
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+      } else {
+        Alert.alert("Verification incomplete", JSON.stringify(result));
+      }
+    } catch (err: any) {
+      Alert.alert("Verification failed", err.errors?.[0]?.message || err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (pendingVerification) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.logo}>Verify Email</Text>
+        <View style={styles.card}>
+          <Text style={{ marginBottom: 12, color: "#555" }}>
+            Enter the verification code sent to {email}
+          </Text>
+          <AuthInput
+            placeholder="Verification code"
+            keyboardType="number-pad"
+            value={code}
+            onChangeText={setCode}
+          />
+          <TouchableOpacity
+            style={[styles.signupButton, loading && { opacity: 0.7 }]}
+            onPress={onVerify}
+            disabled={loading}
+          >
+            <Text style={styles.signupText}>{loading ? "Verifying..." : "Verify"}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
   const renderStep1 = () => (
     <>
       <AuthInput placeholder="First name" value={firstName} onChangeText={setFirstName} />
-      <AuthInput placeholder="Middle name" value={middleName} onChangeText={setMiddleName} />
       <AuthInput placeholder="Last name" value={lastName} onChangeText={setLastName} />
-
       <TouchableOpacity style={styles.dateInput} onPress={() => setShowDatePicker(true)}>
         <Text style={{ color: dob ? "#000" : "#888" }}>
           {dob ? dob.toDateString() : "Select Date of Birth"}
         </Text>
       </TouchableOpacity>
-
       {showDatePicker && (
         <DateTimePicker
           value={dob || new Date()}
@@ -126,9 +130,7 @@ export default function SignupScreen() {
           }}
         />
       )}
-
       <View style={{ height: 10 }} />
-
       <AuthInput placeholder="Mobile number" keyboardType="phone-pad" value={mobile} onChangeText={setMobile} />
       <AuthInput placeholder="Current address" value={address} onChangeText={setAddress} />
       <AuthInput placeholder="Email" value={email} onChangeText={setEmail} autoCapitalize="none" />
@@ -151,34 +153,24 @@ export default function SignupScreen() {
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <Text style={styles.logo}>Sign-Up</Text>
         <Text style={styles.step}>Step {step} of 2</Text>
-
         <View style={styles.card}>
           {step === 1 && renderStep1()}
           {step === 2 && renderStep2()}
-
           {step < 2 ? (
-            <TouchableOpacity
-              style={styles.nextButton}
-              onPress={() => {
-                if (validateStep1()) nextStep();
-              }}
-            >
+            <TouchableOpacity style={styles.nextButton} onPress={() => { if (validateStep1()) nextStep(); }}>
               <Text style={styles.nextText}>Next</Text>
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity style={styles.signupButton} onPress={submitAll} disabled={loading}>
+            <TouchableOpacity style={[styles.signupButton, loading && { opacity: 0.7 }]} onPress={submitAll} disabled={loading}>
               <Text style={styles.signupText}>{loading ? "Submitting..." : "Finish Signup"}</Text>
             </TouchableOpacity>
           )}
-
           {step > 1 && (
             <TouchableOpacity onPress={prevStep}>
               <Text style={styles.back}>Back</Text>
             </TouchableOpacity>
           )}
-
           <View style={styles.divider} />
-
           <Link href="/(auth)/login" asChild>
             <TouchableOpacity style={styles.loginButton}>
               <Text style={styles.loginText}>Already have an account?</Text>
@@ -204,5 +196,5 @@ const styles = StyleSheet.create({
   divider: { height: 1, backgroundColor: "#ddd", marginVertical: 16 },
   loginButton: { backgroundColor: "#1877f2", paddingVertical: 12, borderRadius: 6, alignItems: "center" },
   loginText: { color: "#fff", fontWeight: "bold" },
-  dateInput: { borderWidth: 1, borderColor: "#ccc", borderRadius: 6, padding: 12,},
+  dateInput: { borderWidth: 1, borderColor: "#ccc", borderRadius: 6, padding: 12 },
 });

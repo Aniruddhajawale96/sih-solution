@@ -1,18 +1,20 @@
-import { Session } from '@supabase/supabase-js'
-import { createContext, useContext } from 'react'
+import { useAuth, useUser } from '@clerk/clerk-expo'
 
 export type AuthData = {
-    session?: Session | null
-    profile?: any | null
-    isLoading: boolean
-    isLoggedIn: boolean
+  isLoading: boolean
+  isLoggedIn: boolean
+  userId: string | null | undefined
+  user: any
 }
 
-export const AuthContext = createContext<AuthData>({
-    session: undefined,
-    profile: undefined,
-    isLoading: true,
-    isLoggedIn: false,
-})
+export const useAuthContext = (): AuthData => {
+  const { isLoaded, isSignedIn, userId } = useAuth()
+  const { user } = useUser()
 
-export const useAuthContext = () => useContext(AuthContext)
+  return {
+    isLoading: !isLoaded,
+    isLoggedIn: !!isSignedIn,
+    userId,
+    user,
+  }
+}

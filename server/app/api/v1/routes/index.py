@@ -8,12 +8,19 @@ from app.api.v1.routes.model_routes import router as model_router
 from app.api.v1.routes.blockchain import router as payout_router
 
 router = APIRouter()
+
+# Final paths under /api/v1:
+# /api/v1/farm/...
 router.include_router(farm_router, prefix="/farm", tags=["Farm"])
+# /api/v1/farm/visit/...
 router.include_router(farm_visit_router, prefix="/farm/visit", tags=["Farm Visit"])
+# /api/v1/admin/...
 router.include_router(admin_router, prefix="/admin", tags=["Admin"])
+# /api/v1/scheme/applications/...
 router.include_router(application_router, prefix="/scheme", tags=["Scheme Applications"])
+# /api/v1/farmer-schemes/...  (prefix already set on the router itself)
 router.include_router(farmer_scheme_router)
+# /api/v1/model/...
 router.include_router(model_router, prefix="/model", tags=["Model"])
-router.include_router(farm_router, prefix="/api/v1/farm", tags=["farm"])
-router.include_router(model_router, prefix="/api/v1/model", tags=["model"])
-router.include_router(payout_router, prefix="/api/v1")
+# /api/v1/payout/...  (prefix "/payout" already set on the router itself)
+router.include_router(payout_router)
