@@ -1,0 +1,489 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Create `backend/core/database.py` with SQLAlchemy 2.0 async engine": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756725342
+      },
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756739390
+      },
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756874007
+      }
+    ],
+    "1.2 Create `backend/core/schemas.py` with shared Pydantic envelope": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756727285
+      },
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756742502
+      },
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756877197
+      }
+    ],
+    "1.4 Create `backend/main.py` — FastAPI app with router aggregation and lifespan": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756728689
+      },
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756881121
+      },
+      {
+        "executionId": "f0e984e8-e253-4150-9cbc-690aecb81b5a",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757009011
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757374809
+      }
+    ],
+    "1.5 Create `backend/alembic.ini` and `backend/alembic/env.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756728767
+      },
+      {
+        "executionId": "f0e984e8-e253-4150-9cbc-690aecb81b5a",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756993693
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757378203
+      }
+    ],
+    "1.6 Create `backend/Dockerfile`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756728920
+      },
+      {
+        "executionId": "f0e984e8-e253-4150-9cbc-690aecb81b5a",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756996581
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757381167
+      }
+    ],
+    "2.1 Implement SQLAlchemy models for Base Layer and security tables": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756729024
+      },
+      {
+        "executionId": "f0e984e8-e253-4150-9cbc-690aecb81b5a",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756999768
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757384326
+      }
+    ],
+    "2.2 Implement SQLAlchemy models for Essential Layer": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756729087
+      },
+      {
+        "executionId": "f0e984e8-e253-4150-9cbc-690aecb81b5a",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757002823
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757387438
+      }
+    ],
+    "2.3 Implement SQLAlchemy models for workflow and state adapter tables": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756729181
+      },
+      {
+        "executionId": "f0e984e8-e253-4150-9cbc-690aecb81b5a",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757005924
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757394028
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757518374
+      }
+    ],
+    "2.4 Generate Alembic initial migration `backend/alembic/versions/001_initial.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756729334
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757528237
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794758666250
+      }
+    ],
+    "3.1 Implement `backend/core/auth.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756729469
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794758684855
+      },
+      {
+        "executionId": "73e24eff-b1ce-43cf-bea2-cbab46111556",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794759074711
+      },
+      {
+        "executionId": "73e24eff-b1ce-43cf-bea2-cbab46111556",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794759078441
+      }
+    ],
+    "3.2 Implement `backend/core/rbac.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756729598
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794758692078
+      },
+      {
+        "executionId": "73e24eff-b1ce-43cf-bea2-cbab46111556",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794759081693
+      },
+      {
+        "executionId": "73e24eff-b1ce-43cf-bea2-cbab46111556",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794759085134
+      }
+    ],
+    "3.3 Implement `backend/core/audit.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756729705
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794758695355
+      },
+      {
+        "executionId": "73e24eff-b1ce-43cf-bea2-cbab46111556",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794759089413
+      },
+      {
+        "executionId": "73e24eff-b1ce-43cf-bea2-cbab46111556",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794759093787
+      }
+    ],
+    "3.4 Implement `backend/routers/auth.py` — POST /auth/login, POST /auth/refresh, POST /auth/logout": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756729796
+      }
+    ],
+    "4. Checkpoint — foundation green": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756729910
+      }
+    ],
+    "5.1 Write Public and Internal schemas for Base Layer and security resources in `backend/core/schemas.py` (or per-router schema files)": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756730031
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757531629
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794758670232
+      }
+    ],
+    "5.2 Write Public and Internal schemas for Essential Layer resources": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756730154
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757535121
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794758673597
+      }
+    ],
+    "5.3 Write schemas for Workflow, Citizen, Admin, and ML resources": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756730244
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757538553
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794758676884
+      }
+    ],
+    "6.1 Implement `backend/scripts/seed_loader.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756730376
+      },
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794758698615
+      },
+      {
+        "executionId": "73e24eff-b1ce-43cf-bea2-cbab46111556",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794759099931
+      },
+      {
+        "executionId": "73e24eff-b1ce-43cf-bea2-cbab46111556",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794759157298
+      }
+    ],
+    "7.1 Implement `backend/routers/parcel.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756730459
+      }
+    ],
+    "7.2 Implement `backend/routers/ror.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756730544
+      }
+    ],
+    "8.1 Implement `backend/routers/registration.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756730637
+      }
+    ],
+    "8.2 Implement `backend/routers/encumbrance.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756730748
+      }
+    ],
+    "8.3 Implement `backend/routers/zoning.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756730848
+      }
+    ],
+    "8.4 Implement `backend/routers/building_permission.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756730940
+      }
+    ],
+    "8.5 Implement `backend/routers/tax.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756731045
+      }
+    ],
+    "9. Checkpoint — domain routers green": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756731122
+      }
+    ],
+    "10.1 Implement `backend/workflow_engine/consumer.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756731215
+      }
+    ],
+    "10.2 Implement `backend/routers/workflow.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756731309
+      }
+    ],
+    "11.1 Implement `backend/routers/citizen.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756731406
+      }
+    ],
+    "12.1 Implement `backend/routers/admin.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756731514
+      }
+    ],
+    "12.2 Implement `backend/routers/analytics.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756731613
+      }
+    ],
+    "13.1 Implement `backend/ml/change_detection.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756731713
+      }
+    ],
+    "13.2 Implement `backend/ml/fraud_score.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756731787
+      }
+    ],
+    "13.3 Implement `backend/ml/ocr_extraction.py`": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756731867
+      }
+    ],
+    "13.4 Implement `backend/routers/ml.py` — POST /ml/change-detection, /ml/fraud-score, /ml/ocr-extract": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756731957
+      }
+    ],
+    "14. Checkpoint — full backend green": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756732050
+      }
+    ],
+    "16.1 Export `backend/openapi.yaml` from live FastAPI app": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756732141
+      }
+    ],
+    "17. Final checkpoint — all tests pass, OpenAPI committed": [
+      {
+        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794756732233
+      }
+    ],
+    "1. Scaffold application foundation and core infrastructure": [
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794757381257
+      }
+    ],
+    "2. Database models and initial migration": [
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794758666351
+      }
+    ],
+    "5. Pydantic response schemas for all resources": [
+      {
+        "executionId": "93ca15ec-cabe-43a5-8600-72ec207e4fcb",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794758677038
+      }
+    ],
+    "6. Seed loader and data scripts": [
+      {
+        "executionId": "73e24eff-b1ce-43cf-bea2-cbab46111556",
+        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
+        "timestamp": 1794759157492
+      }
+    ]
+  }
+}
