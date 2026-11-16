@@ -1,0 +1,387 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "3.1 CitizenDashboard -- POST /auth/login form -> setAuth -> redirect by role": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760715059
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760738045
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760922854
+      }
+    ],
+    "3.2 OfficerLogin -- same flow for officer roles": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760715180
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760929323
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794761055195
+      }
+    ],
+    "4.1 Tabbed view: Base / RoR / Registration / Encumbrance / Zoning / Tax": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760715283
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794761061672
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794761308990
+      }
+    ],
+    "4.2 Fetch each layer via TanStack Query": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760715376
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794761312334
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794761604982
+      }
+    ],
+    "4.3 Apply CITIZEN masking (partial owner_name, hidden transaction_value)": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760715526
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794761608453
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794761747413
+      }
+    ],
+    "5.1 VerifyForm -> GET /ror/{ulpin} -> display masked result": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760715608
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794761757114
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794762966483
+      }
+    ],
+    "5.2 PDF download ownership certificate": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760715690
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794762969822
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763034980
+      }
+    ],
+    "6.1 MapLibre GL JS + pg_tileserv vector tile source": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760715778
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763038889
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763095330
+      }
+    ],
+    "6.2 LayerPanel: Base/Essential/Additional/Violation toggles + StateFilter": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760715864
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763099254
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763197120
+      }
+    ],
+    "6.3 Search -> GET /parcels/search, click parcel -> ParcelPreview sidebar": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760715953
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763200775
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763355975
+      }
+    ],
+    "7.1 ServiceRequestPortal (5) -- POST /citizen/service-request": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760716049
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763363375
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763453297
+      }
+    ],
+    "7.2 RequestTracking (6) -- GET /citizen/requests": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760716142
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763457213
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763531964
+      }
+    ],
+    "8.1 OfficerDashboard (9) -- GET /workflow/tasks -> PendingTasksCard": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760716228
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763535770
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763605543
+      }
+    ],
+    "8.2 WorkflowApproval (10) -- Approve/Reject tasks": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760716317
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763609392
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763679538
+      }
+    ],
+    "9. Zoning Dashboard (11) -- ViolationMap + ChangeDetectionPanel file upload": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760716416
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763687306
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794764154939
+      }
+    ],
+    "10. Sync Monitor (12) -- SSE connection to /workflow/events/stream": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760716502
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794764158796
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794764352852
+      }
+    ],
+    "11. State Admin Panel (13) -- analytics + users + adapter view": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760716660
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794764356697
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794764457720
+      }
+    ],
+    "12. National Analytics (14) -- Recharts BarChart + KPI row": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760716767
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794764461563
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794764574529
+      }
+    ],
+    "13. Audit Trail Viewer (15) -- chain verification + SHA-256 recompute": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760716856
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794764578253
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794764979393
+      }
+    ],
+    "14. API Explorer (16) -- Swagger UI embed from /openapi.json": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794760716953
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794764983545
+      },
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794768639903
+      }
+    ],
+    "3. Working login flows": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794761055244
+      }
+    ],
+    "4. Parcel 360 View (Screen 3)": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794761747456
+      }
+    ],
+    "5. Ownership Verification (Screen 4)": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763035042
+      }
+    ],
+    "6. GIS Map Explorer (Screen 2)": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763356125
+      }
+    ],
+    "7. Citizen screens": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763532047
+      }
+    ],
+    "8. Officer screens": [
+      {
+        "executionId": "949878bb-7284-4be7-8043-54df62a96ebb",
+        "chatSessionId": "sess_50f5d30c-fa41-4859-b608-7702eb932e3d",
+        "timestamp": 1794763679721
+      }
+    ]
+  }
+}
