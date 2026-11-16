@@ -11,7 +11,7 @@ interface SseEvent {
   receivedAt: Date
 }
 
-type ConnectionStatus = 'connecting' | 'connected' | 'disconnected'
+type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'unauthenticated'
 
 // Known event types
 const KNOWN_TYPES = ['sync_started', 'sync_completed', 'sync_failed', 'task_updated'] as const
@@ -98,6 +98,16 @@ function StatusDot({ status }: { status: ConnectionStatus }) {
       </span>
     )
   }
+  if (status === 'unauthenticated') {
+    return (
+      <span className="inline-flex items-center gap-1.5 text-orange-700 text-sm font-medium">
+        <span className="relative flex h-2.5 w-2.5">
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-orange-500" />
+        </span>
+        Not authenticated
+      </span>
+    )
+  }
   return (
     <span className="inline-flex items-center gap-1.5 text-red-700 text-sm font-medium">
       <span className="relative flex h-2.5 w-2.5">
@@ -173,6 +183,15 @@ export default function SyncMonitor() {
   const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const connect = useCallback(() => {
+    // If there is no access token, refuse to open the connection rather than
+    // falling back to an unauthenticated stream. The previous fallback to
+    // '/api/v1/workflow/events/stream' (no token) leaked the stream publicly
+    // and provided no useful data to an unauthenticated caller (bug fix).
+    if (!accessToken) {
+      setStatus('unauthenticated')
+      return
+    }
+
     // Clean up any existing connection
     if (esRef.current) {
       esRef.current.close()
@@ -185,9 +204,11 @@ export default function SyncMonitor() {
 
     setStatus('connecting')
 
-    const url = accessToken
-      ? `/api/v1/workflow/events/stream?token=${encodeURIComponent(accessToken)}`
-      : '/api/v1/workflow/events/stream'
+    // NOTE: EventSource does not support custom headers, so the token is passed
+    // as a query parameter. This is a known limitation of the EventSource API.
+    // A production deployment should exchange a short-lived SSE token via POST
+    // before opening this connection, to avoid persisting the JWT in server logs.
+    const url = `/api/v1/workflow/events/stream?token=${encodeURIComponent(accessToken)}`
 
     const es = new EventSource(url)
     esRef.current = es
@@ -265,6 +286,19 @@ export default function SyncMonitor() {
           </div>
         </div>
 
+        {/* Unauthenticated warning */}
+        {status === 'unauthenticated' && (
+          <div className="mb-6 flex items-start gap-3 rounded-lg border border-orange-300 bg-orange-50 p-4 text-orange-800">
+            <span className="text-lg">🔒</span>
+            <div>
+              <p className="font-semibold text-sm">Authentication required</p>
+              <p className="text-sm mt-0.5">
+                You must be signed in to access the live event stream. Please log in and return to this page.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Legend */}
         <div className="mb-4 flex flex-wrap gap-2 items-center">
           <span className="text-xs text-slate-400 font-medium mr-1">Event types:</span>
@@ -293,7 +327,9 @@ export default function SyncMonitor() {
             <div className="py-20 text-center text-slate-400">
               <p className="text-4xl mb-3">📡</p>
               <p className="font-medium text-slate-500">
-                {status === 'connecting'
+                {status === 'unauthenticated'
+                  ? 'Sign in to view the live event stream.'
+                  : status === 'connecting'
                   ? 'Connecting to event stream…'
                   : status === 'disconnected'
                   ? 'Disconnected. Will retry in 5 seconds.'

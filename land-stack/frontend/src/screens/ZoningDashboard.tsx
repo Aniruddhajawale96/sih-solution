@@ -43,6 +43,10 @@ function ViolationMap({ violations }: ViolationMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
   const markersRef = useRef<maplibregl.Marker[]>([])
+  // Track any pending 'load' callback so we can cancel it before re-registering.
+  // Without this, every render that fires before the map loads queues another
+  // addMarkers call via map.once, resulting in duplicate markers (bug fix).
+  const pendingAddMarkersRef = useRef<(() => void) | null>(null)
 
   // Initialise map once
   useEffect(() => {
@@ -61,6 +65,11 @@ function ViolationMap({ violations }: ViolationMapProps) {
     mapRef.current = map
 
     return () => {
+      // Cancel any pending load listener before destroying the map
+      if (pendingAddMarkersRef.current) {
+        map.off('load', pendingAddMarkersRef.current)
+        pendingAddMarkersRef.current = null
+      }
       markersRef.current.forEach((m) => m.remove())
       markersRef.current = []
       map.remove()
@@ -73,11 +82,20 @@ function ViolationMap({ violations }: ViolationMapProps) {
     const map = mapRef.current
     if (!map) return
 
+    // Cancel any previously queued load listener before proceeding.
+    // If we don't do this, multiple renders before map.load fires will stack up
+    // separate once('load', addMarkers) calls, each adding the full marker set.
+    if (pendingAddMarkersRef.current) {
+      map.off('load', pendingAddMarkersRef.current)
+      pendingAddMarkersRef.current = null
+    }
+
     // Remove existing markers
     markersRef.current.forEach((m) => m.remove())
     markersRef.current = []
 
     function addMarkers() {
+      pendingAddMarkersRef.current = null
       violations.forEach((v) => {
         // Coloured dot element
         const el = document.createElement('div')
@@ -91,17 +109,40 @@ function ViolationMap({ violations }: ViolationMapProps) {
           cursor: pointer;
         `
 
+        // Build popup with DOM nodes rather than setHTML to prevent XSS.
+        // The original code used setHTML with raw string interpolation of
+        // server-provided values (ulpin, violation_type) — a stored XSS vector.
+        const popupEl = document.createElement('div')
+        popupEl.style.cssText = 'font-family:sans-serif;font-size:13px;line-height:1.5;padding:4px 2px'
+
+        const title = document.createElement('div')
+        title.style.cssText = 'font-weight:700;color:#1e293b;margin-bottom:4px'
+        title.textContent = v.ulpin
+        popupEl.appendChild(title)
+
+        const typeLine = document.createElement('div')
+        typeLine.style.color = '#475569'
+        const typeLabel = document.createElement('span')
+        typeLabel.style.fontWeight = '600'
+        typeLabel.textContent = 'Type: '
+        typeLine.appendChild(typeLabel)
+        typeLine.appendChild(document.createTextNode(v.violation_type))
+        popupEl.appendChild(typeLine)
+
+        const sevLine = document.createElement('div')
+        sevLine.style.color = '#475569'
+        const sevLabel = document.createElement('span')
+        sevLabel.style.fontWeight = '600'
+        sevLabel.textContent = 'Severity: '
+        sevLine.appendChild(sevLabel)
+        const sevValue = document.createElement('span')
+        sevValue.style.cssText = `color:${SEVERITY_COLOR[v.severity]};font-weight:600`
+        sevValue.textContent = severityLabel(v.severity)
+        sevLine.appendChild(sevValue)
+        popupEl.appendChild(sevLine)
+
         const popup = new maplibregl.Popup({ offset: 12, closeButton: false })
-          .setHTML(`
-            <div style="font-family:sans-serif;font-size:13px;line-height:1.5;padding:4px 2px">
-              <div style="font-weight:700;color:#1e293b;margin-bottom:4px">${v.ulpin}</div>
-              <div style="color:#475569"><span style="font-weight:600">Type:</span> ${v.violation_type}</div>
-              <div style="color:#475569">
-                <span style="font-weight:600">Severity:</span>
-                <span style="color:${SEVERITY_COLOR[v.severity]};font-weight:600"> ${severityLabel(v.severity)}</span>
-              </div>
-            </div>
-          `)
+          .setDOMContent(popupEl)
 
         const marker = new maplibregl.Marker({ element: el })
           .setLngLat([v.lng, v.lat])
@@ -109,7 +150,6 @@ function ViolationMap({ violations }: ViolationMapProps) {
           .addTo(map!)
 
         el.addEventListener('click', () => marker.togglePopup())
-
         markersRef.current.push(marker)
       })
     }
@@ -117,6 +157,7 @@ function ViolationMap({ violations }: ViolationMapProps) {
     if (map.loaded()) {
       addMarkers()
     } else {
+      pendingAddMarkersRef.current = addMarkers
       map.once('load', addMarkers)
     }
   }, [violations])
