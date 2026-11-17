@@ -27,6 +27,10 @@
     "10.3 Write property test for workflow event chain": {
       "status": "passed",
       "lastRunTimestamp": 1794875029633
+    },
+    "15.2 Write property test for jurisdiction scoping": {
+      "status": "passed",
+      "lastRunTimestamp": 1794939321826
     }
   },
   "executionHistory": {
@@ -301,6 +305,16 @@
         "executionId": "686a59da-a328-4c99-8451-4efe0663bea4",
         "chatSessionId": "sess_89a81f86-fa1d-4204-b796-f86ae9b05af5",
         "timestamp": 1794935156718
+      },
+      {
+        "executionId": "0daaa98d-3762-4f5a-a1a4-9b38993b6e13",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794939467218
+      },
+      {
+        "executionId": "0daaa98d-3762-4f5a-a1a4-9b38993b6e13",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794939533908
       }
     ],
     "5.1 Write Public and Internal schemas for Base Layer and security resources in `backend/core/schemas.py` (or per-router schema files)": [
@@ -927,6 +941,16 @@
         "executionId": "686a59da-a328-4c99-8451-4efe0663bea4",
         "chatSessionId": "sess_89a81f86-fa1d-4204-b796-f86ae9b05af5",
         "timestamp": 1794935157526
+      },
+      {
+        "executionId": "0daaa98d-3762-4f5a-a1a4-9b38993b6e13",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794939370449
+      },
+      {
+        "executionId": "0daaa98d-3762-4f5a-a1a4-9b38993b6e13",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794939458265
       }
     ],
     "17. Final checkpoint — all tests pass, OpenAPI committed": [
@@ -949,6 +973,16 @@
         "executionId": "686a59da-a328-4c99-8451-4efe0663bea4",
         "chatSessionId": "sess_89a81f86-fa1d-4204-b796-f86ae9b05af5",
         "timestamp": 1794935157655
+      },
+      {
+        "executionId": "0daaa98d-3762-4f5a-a1a4-9b38993b6e13",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794939537992
+      },
+      {
+        "executionId": "0daaa98d-3762-4f5a-a1a4-9b38993b6e13",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794939650018
       }
     ],
     "1. Scaffold application foundation and core infrastructure": [
@@ -1360,6 +1394,16 @@
         "executionId": "487cb5c1-a875-4592-918a-149ba719b899",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794936780001
+      },
+      {
+        "executionId": "0daaa98d-3762-4f5a-a1a4-9b38993b6e13",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794938861389
+      },
+      {
+        "executionId": "0daaa98d-3762-4f5a-a1a4-9b38993b6e13",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794939366290
       }
     ],
     "3. Security core — JWT auth, RBAC dependencies, audit chain": [
@@ -1409,6 +1453,20 @@
         "executionId": "487cb5c1-a875-4592-918a-149ba719b899",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794935725162
+      }
+    ],
+    "15. Auth test suite and jurisdiction property tests": [
+      {
+        "executionId": "0daaa98d-3762-4f5a-a1a4-9b38993b6e13",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794939366458
+      }
+    ],
+    "16. OpenAPI export": [
+      {
+        "executionId": "0daaa98d-3762-4f5a-a1a4-9b38993b6e13",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794939458508
       }
     ]
   }

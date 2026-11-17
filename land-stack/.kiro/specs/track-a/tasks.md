@@ -120,7 +120,7 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
 
 ---
 
-- [ ] 4. Checkpoint — foundation green
+- [x] 4. Checkpoint — foundation green
   - Ensure all tests pass, ask the user if questions arise.
 
 ---
@@ -324,7 +324,7 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
 
 ---
 
-- [ ] 15. Auth test suite and jurisdiction property tests
+- [x] 15. Auth test suite and jurisdiction property tests
   - [x] 15.1 Write `backend/tests/test_auth.py`
     - Test valid login returns 200 wiscm-history-item:d%3A%5Csih-solution?%7B%22repositoryId%22%3A%22scm0_0%22%2C%22historyItemId%22%3A%2249762869533804a4ab9dd4e8a702b4b472441380%22%2C%22historyItemParentId%22%3A%224470c496e720843983052c1e40a2dc4b0db93941%22%2C%22historyItemDisplayId%22%3A%224976286%22%7Dth both tokens
     - Test refresh with valid refresh token returns new access token
@@ -332,22 +332,22 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
     - Test expired token returns 401
     - _Requirements: 12.1, 12.2_
 
-  - [ ] 15.2 Write property test for jurisdiction scoping
+  - [x] 15.2 Write property test for jurisdiction scoping
     - **Property 6: Jurisdiction scoping**
     - **Validates: Requirements 5.4, 5.5**
     - Generate officer JWTs with random `jurisdiction` values; for any parcel whose `state_code != jurisdiction`, assert 403 on write endpoints
 
 ---
 
-- [ ] 16. OpenAPI export
-  - [ ] 16.1 Export `backend/openapi.yaml` from live FastAPI app
+- [x] 16. OpenAPI export
+  - [x] 16.1 Export `backend/openapi.yaml` from live FastAPI app
     - Run `python -c "import yaml, json; from main import app; print(yaml.dump(app.openapi()))" > backend/openapi.yaml` (or equivalent script)
     - Commit `openapi.yaml` to version control so Track B can generate TypeScript types offline
     - _Requirements: 11.1, 11.2_
 
 ---
 
-- [ ] 17. Final checkpoint — all tests pass, OpenAPI committed
+- [x] 17. Final checkpoint — all tests pass, OpenAPI committed
   - Ensure all tests pass with `pytest backend/tests/ -v`; ensure `backend/openapi.yaml` is committed and readable.
   - Ensure all tests pass, ask the user if questions arise.
 
