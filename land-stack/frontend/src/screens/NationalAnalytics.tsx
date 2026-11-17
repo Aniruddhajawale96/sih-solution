@@ -138,7 +138,7 @@ function ChartSection({ title, data, dataKey, barColor }: ChartSectionProps) {
 export default function NationalAnalytics() {
   const { data, isLoading, isError, error } = useQuery<NationalAnalytics>({
     queryKey: ['national', 'analytics'],
-    queryFn: () => apiClient.get('/admin/national/analytics').then(r => r.data),
+    queryFn: () => apiClient.get('/analytics/national').then(r => r.data),
   })
 
   const chartData =

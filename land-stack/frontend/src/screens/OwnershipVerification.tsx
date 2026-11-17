@@ -88,7 +88,7 @@ export function VerificationResult({ data, ulpin }: VerificationResultProps) {
     setDownloadError(null)
     setIsDownloading(true)
     try {
-      const response = await apiClient.get(`/ror/${ulpin}/certificate`, {
+      const response = await apiClient.get(`/ror/${ulpin}`, {
         responseType: 'blob',
       })
       const blobUrl = URL.createObjectURL(response.data as Blob)

@@ -319,7 +319,7 @@ export default function AuditTrailViewer() {
 
   const { data: entries, isLoading, isError, error } = useQuery<AuditEntry[]>({
     queryKey: ['audit', ulpin],
-    queryFn: () => apiClient.get(`/audit/${ulpin}`).then(r => r.data),
+    queryFn: () => apiClient.get(`/analytics/audit/${ulpin}`).then(r => r.data),
     enabled: Boolean(ulpin),
   })
 

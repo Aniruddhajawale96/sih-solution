@@ -5,7 +5,7 @@ import { Footer } from '@/components/Footer'
 import { apiClient } from '@/lib/apiClient'
 import { useAuthStore, Role } from '@/store/authStore'
 
-function roleToRoute(role: Role): string {
+function roleToRoute(role: Role  // already replaced): string {
   switch (role) {
     case 'CITIZEN':     return '/citizen/services'
     case 'REV_OFF':
@@ -20,16 +20,14 @@ function roleToRoute(role: Role): string {
 
 interface LoginResponse {
   access_token: string
-  refresh_token?: string
-  user: {
-    username: string
-    role: Role
-    jurisdiction?: string
-  }
+  refresh_token: string
+  token_type: string
+  role: Role
+  jurisdiction: string | null
 }
 
 export default function OfficerLogin() {
-  const [email, setEmail]       = useState('')
+  const [username, setUsername]       = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading]   = useState(false)
   const [error, setError]       = useState<string | null>(null)
@@ -42,15 +40,15 @@ export default function OfficerLogin() {
     setError(null)
     setLoading(true)
     try {
-      const { data } = await apiClient.post<LoginResponse>('/auth/login', { email, password })
+      const { data } = await apiClient.post<LoginResponse>('/auth/login', { username, password })
       setAuth({
-        username:     data.user.username,
-        role:         data.user.role,
-        jurisdiction: data.user.jurisdiction ?? null,
+        username:     username,
+        role:         data.role,
+        jurisdiction: data.jurisdiction ?? null,
         accessToken:  data.access_token,
-        refreshToken: data.refresh_token ?? null,
+        refreshToken: data.refresh_token,
       })
-      navigate(roleToRoute(data.user.role))
+      navigate(roleToRoute(data.role))
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { detail?: string } } })
@@ -73,17 +71,17 @@ export default function OfficerLogin() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
               <label htmlFor="email" className="text-sm font-medium text-slate-700">
-                Work Email
+                Username
               </label>
               <input
-                id="email"
-                type="email"
-                autoComplete="email"
+                id="username"
+                type="text"
+                autoComplete="username"
                 required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
+                value={username}
+                onChange={e => setUsername(e.target.value)}
                 className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                placeholder="officer@gov.in"
+                placeholder="officer_username"
               />
             </div>
 

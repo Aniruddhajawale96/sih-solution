@@ -157,8 +157,8 @@ function BasePanel({ ulpin, role }: TabPanelProps) {
 
   if (isLoading) return <LoadingState />
   if (isError) return <ErrorState message={(error as Error)?.message ?? 'Failed to load base data.'} />
-  const maskedData = maskCitizenData(data, role)
-  return <DataTable data={maskedData} />
+  
+  return <DataTable data={data} />
 }
 
 function RorPanel({ ulpin, role }: TabPanelProps) {
@@ -170,8 +170,8 @@ function RorPanel({ ulpin, role }: TabPanelProps) {
 
   if (isLoading) return <LoadingState />
   if (isError) return <ErrorState message={(error as Error)?.message ?? 'Failed to load RoR data.'} />
-  const maskedData = maskCitizenData(data, role)
-  return <DataTable data={maskedData} />
+  
+  return <DataTable data={data} />
 }
 
 function RegistrationPanel({ ulpin, role }: TabPanelProps) {
@@ -183,8 +183,8 @@ function RegistrationPanel({ ulpin, role }: TabPanelProps) {
 
   if (isLoading) return <LoadingState />
   if (isError) return <ErrorState message={(error as Error)?.message ?? 'Failed to load registration data.'} />
-  const maskedData = maskCitizenData(data, role)
-  return <DataTable data={maskedData} />
+  
+  return <DataTable data={data} />
 }
 
 function EncumbrancePanel({ ulpin, role }: TabPanelProps) {
@@ -196,8 +196,8 @@ function EncumbrancePanel({ ulpin, role }: TabPanelProps) {
 
   if (isLoading) return <LoadingState />
   if (isError) return <ErrorState message={(error as Error)?.message ?? 'Failed to load encumbrance data.'} />
-  const maskedData = maskCitizenData(data, role)
-  return <DataTable data={maskedData} />
+  
+  return <DataTable data={data} />
 }
 
 function ZoningPanel({ ulpin, role }: TabPanelProps) {
@@ -209,8 +209,8 @@ function ZoningPanel({ ulpin, role }: TabPanelProps) {
 
   if (isLoading) return <LoadingState />
   if (isError) return <ErrorState message={(error as Error)?.message ?? 'Failed to load zoning data.'} />
-  const maskedData = maskCitizenData(data, role)
-  return <DataTable data={maskedData} />
+  
+  return <DataTable data={data} />
 }
 
 function TaxPanel({ ulpin, role }: TabPanelProps) {
@@ -222,8 +222,8 @@ function TaxPanel({ ulpin, role }: TabPanelProps) {
 
   if (isLoading) return <LoadingState />
   if (isError) return <ErrorState message={(error as Error)?.message ?? 'Failed to load tax data.'} />
-  const maskedData = maskCitizenData(data, role)
-  return <DataTable data={maskedData} />
+  
+  return <DataTable data={data} />
 }
 
 // ── Tab content router ─────────────────────────────────────────────────────────
