@@ -1,0 +1,3058 @@
+openapi: 3.1.0
+info:
+  title: Land Stack API
+  description: 'Unified land-records platform for India (SIH PS #26014). All responses
+    follow the Envelope[T] schema.'
+  version: 1.0.0
+paths:
+  /api/v1/auth/login:
+    post:
+      tags:
+      - Auth
+      summary: Login and obtain JWT tokens
+      description: 'Verify username/password and return an access token + refresh
+        token.
+
+
+        - Access token expires in 15 minutes.
+
+        - Refresh token expires in 7 days.
+
+        - Both tokens carry `sub`, `role`, `jurisdiction`, `jti` claims.'
+      operationId: login_api_v1_auth_login_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_LoginResponse_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/auth/refresh:
+    post:
+      tags:
+      - Auth
+      summary: Refresh access token
+      description: 'Accept a valid refresh token and issue a new access token.
+
+
+        Raises 401 if the refresh token is expired, invalid, blacklisted, or is
+
+        not of type "refresh".'
+      operationId: refresh_api_v1_auth_refresh_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_RefreshResponse_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/auth/logout:
+    post:
+      tags:
+      - Auth
+      summary: "Logout \u2014 blacklist tokens"
+      description: 'Blacklist both the current access token and the provided refresh
+        token.
+
+
+        The client must supply:
+
+        - The Bearer access token in the `Authorization` header.
+
+        - The refresh token in the request body `{ "refresh_token": "..." }`.
+
+
+        Both tokens'' JTIs are stored in Redis with a TTL equal to their remaining
+
+        lifetime so that the keys auto-expire and don''t pile up indefinitely.'
+      operationId: logout_api_v1_auth_logout_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_dict_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/parcels/search:
+    get:
+      tags:
+      - Parcels
+      summary: Search parcels
+      description: Filtered, paginated parcel search. Open to all authenticated roles.
+        Officers receive ParcelInternal fields; citizens receive ParcelPublic.
+      operationId: search_parcels_api_v1_parcels_search_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Free-text search on district or village_or_city
+          title: Q
+        description: Free-text search on district or village_or_city
+      - name: state_code
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by state code
+          title: State Code
+        description: Filter by state code
+      - name: district
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by district name
+          title: District
+        description: Filter by district name
+      - name: bbox
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Bounding box filter as 'minx,miny,maxx,maxy' (WGS84 decimal
+            degrees)
+          title: Bbox
+        description: Bounding box filter as 'minx,miny,maxx,maxy' (WGS84 decimal degrees)
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          minimum: 1
+          description: Max records to return
+          default: 50
+          title: Limit
+        description: Max records to return
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Number of records to skip
+          default: 0
+          title: Offset
+        description: Number of records to skip
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_list_ParcelPublic__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/parcels/{ulpin}:
+    get:
+      tags:
+      - Parcels
+      summary: Get parcel by ULPIN
+      description: 'Fetch a single parcel.
+
+
+        - **CITIZEN**: receives ``ParcelPublic`` (no polygon geometry).
+
+        - **Officers / Admins**: receives ``ParcelInternal`` (all fields including
+        GeoJSON geometry).
+
+
+        ``check_jurisdiction`` enforces that state-scoped officers can only access
+
+        parcels within their own state.'
+      operationId: get_parcel_api_v1_parcels__ulpin__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/parcels:
+    post:
+      tags:
+      - Parcels
+      summary: Create a new parcel
+      description: "Create a new parcel record.\n\nRequires role ``REV_OFF``, ``STATE_ADMIN``,\
+        \ or ``NATL_ADMIN``.\n\n- Converts the GeoJSON string in ``body.geom`` to\
+        \ a PostGIS geometry via\n  ``ST_GeomFromGeoJSON``.\n- Writes a ``CREATE_PARCEL``\
+        \ audit entry inside the same DB transaction\n  before committing.\n- Returns\
+        \ 201 with the newly created parcel as ``ParcelInternal``."
+      operationId: create_parcel_api_v1_parcels_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParcelCreate'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_ParcelInternal_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/ror/{ulpin}:
+    get:
+      tags:
+      - RoR
+      summary: Fetch RoR record by ULPIN
+      description: "Return the Record of Rights for *ulpin*.\n\n- CITIZEN \u2192 RorPublic\
+        \ (owner_name masked)\n- Any officer/admin role \u2192 RorInternal (all fields,\
+        \ owner_name unmasked)"
+      operationId: get_ror_api_v1_ror__ulpin__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_Union_RorPublic__RorInternal__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - RoR
+      summary: Update RoR record by ULPIN
+      description: "Update RoR fields for *ulpin*.\n\n- Requires REV_OFF, STATE_ADMIN,\
+        \ or NATL_ADMIN.\n- check_jurisdiction enforces that state-scoped officers\
+        \ may only modify\n  parcels in their own jurisdiction.\n- Writes an UPDATE_ROR\
+        \ audit entry inside the same DB transaction.\n- Publishes ``ror.mutation_status_changed``\
+        \ to Redis when mutation_status flips.\n- Returns the updated record as RorInternal."
+      operationId: update_ror_api_v1_ror__ulpin__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RorUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_RorInternal_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/registration:
+    post:
+      tags:
+      - Registration
+      summary: Register a deed
+      description: "Insert a new Registration row for the given ULPIN.\n\n- Writes\
+        \ an audit entry (REGISTER_DEED) inside the same transaction.\n- Commits both\
+        \ the registration row and the audit entry atomically.\n- Publishes `registration.completed`\
+        \ to Redis after the commit so the\n  Workflow Engine consumer can create\
+        \ a MUTATION task.\n- Returns the full RegistrationInternal payload (transaction_value\
+        \ visible)."
+      operationId: create_registration_api_v1_registration_post
+      security:
+      - OAuth2PasswordBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_RegistrationInternal_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Registration
+      summary: List registrations
+      description: "Return a paginated list of Registration records.\n\n- Optional\
+        \ `?ulpin=<ULPIN>` filter narrows results to one parcel.\n- CITIZEN and REV_OFF\
+        \ receive RegistrationPublic (transaction_value omitted,\n  buyer/seller name-masked).\n\
+        - REG_OFF, STATE_ADMIN, NATL_ADMIN receive RegistrationInternal (all fields)."
+      operationId: list_registrations_api_v1_registration_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: ulpin
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by ULPIN
+          title: Ulpin
+        description: Filter by ULPIN
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 500
+          minimum: 1
+          description: Max rows to return
+          default: 50
+          title: Limit
+        description: Max rows to return
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          description: Rows to skip
+          default: 0
+          title: Offset
+        description: Rows to skip
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_list_Union_RegistrationPublic__RegistrationInternal___'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/registration/{registration_id}:
+    get:
+      tags:
+      - Registration
+      summary: Get a single registration
+      description: 'Fetch a single Registration by its integer id.
+
+
+        Returns 404 if the record does not exist.
+
+        Applies the same Public/Internal masking as the list endpoint.'
+      operationId: get_registration_api_v1_registration__registration_id__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: registration_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Registration Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_Union_RegistrationPublic__RegistrationInternal__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/encumbrance:
+    post:
+      tags:
+      - Encumbrance
+      summary: Create an encumbrance record
+      description: 'Insert a new encumbrance row for the given ULPIN.
+
+
+        - Requires role REG_OFF, STATE_ADMIN, or NATL_ADMIN.
+
+        - Writes an audit entry (CREATE_ENCUMBRANCE) in the same transaction.
+
+        - Returns the created record as EncumbranceInternal (HTTP 201).'
+      operationId: create_encumbrance_api_v1_encumbrance_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EncumbranceCreate'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_EncumbrancePublic_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/encumbrance/{ulpin}:
+    get:
+      tags:
+      - Encumbrance
+      summary: List encumbrances for a parcel
+      description: "Return all encumbrance records for the given ULPIN.\n\n- Requires\
+        \ any authenticated role (all 7 roles).\n- No field masking \u2014 encumbrance\
+        \ data is fully public per transparency rules.\n- Returns HTTP 404 if the\
+        \ parcel does not exist."
+      operationId: list_encumbrances_api_v1_encumbrance__ulpin__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_List_EncumbrancePublic__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/zoning/{ulpin}:
+    get:
+      tags:
+      - Zoning
+      summary: Get zoning record for a parcel
+      description: Return the zoning / master-plan record for the given parcel.
+      operationId: get_zoning_api_v1_zoning__ulpin__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_ZoningPublic_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Zoning
+      summary: Update zoning record for a parcel
+      description: "Update zoning fields for the given parcel.\n\n- ``violation_flag``\
+        \ is computed automatically:\n  ``True`` when ``far_existing > far_permitted``\
+        \ after the update.\n- Writes an ``UPDATE_ZONING`` audit entry in the same\
+        \ transaction.\n- Returns the updated record wrapped in ``Envelope[ZoningInternal]``."
+      operationId: update_zoning_api_v1_zoning__ulpin__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZoningUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_ZoningPublic_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/building-permission:
+    post:
+      tags:
+      - BuildingPermission
+      summary: Create a building permission record
+      description: 'Insert a new building permission row for the given ULPIN.
+
+
+        - Requires role PLAN_OFF, STATE_ADMIN, or NATL_ADMIN.
+
+        - Verifies the referenced parcel exists; returns 404 if not.
+
+        - Writes an audit entry (CREATE_BUILDING_PERMISSION) in the same transaction.
+
+        - Returns the created record as BuildingPermissionInternal (HTTP 201).'
+      operationId: create_building_permission_api_v1_building_permission_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BuildingPermissionCreate'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_BuildingPermissionPublic_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/building-permission/{ulpin}:
+    get:
+      tags:
+      - BuildingPermission
+      summary: List building permissions for a parcel
+      description: "Return all building permission records for the given ULPIN.\n\n\
+        - Requires any authenticated role (all 7 roles).\n- No field masking \u2014\
+        \ building permission data is fully public.\n- Returns HTTP 404 if the parcel\
+        \ does not exist."
+      operationId: list_building_permissions_api_v1_building_permission__ulpin__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_List_BuildingPermissionPublic__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/tax/{ulpin}:
+    get:
+      tags:
+      - Tax
+      summary: Get tax record for a parcel
+      description: 'Return the tax/assessment record for the given parcel.
+
+
+        - CITIZEN callers receive ``TaxPublic`` (``annual_tax`` is omitted).
+
+        - All officer and admin roles receive ``TaxInternal`` (all fields).'
+      operationId: get_tax_api_v1_tax__ulpin__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Tax
+      summary: Reassess / update tax record for a parcel
+      description: "Update tax-assessment fields for the given parcel.\n\n- Only fields\
+        \ explicitly provided in the request body are modified\n  (partial update\
+        \ via ``exclude_unset=True``).\n- Writes a ``REASSESS_TAX`` audit entry in\
+        \ the same DB transaction,\n  before ``db.commit()``, per the audit-chain\
+        \ contract (design.md \xA7 4).\n- Returns the updated record wrapped in ``Envelope[TaxInternal]``."
+      operationId: update_tax_api_v1_tax__ulpin__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaxUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_TaxInternal_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/workflow/tasks:
+    get:
+      tags:
+      - Workflow
+      summary: List workflow tasks scoped to caller role/jurisdiction
+      description: "Return workflow tasks visible to the authenticated caller.\n\n\
+        Scoping rules:\n- **NATL_ADMIN**: all tasks across all states.\n- **STATE_ADMIN**:\
+        \ tasks for parcels in the admin's jurisdiction (state_code).\n- **REV_OFF\
+        \ / REG_OFF / PLAN_OFF / TAX_OFF**: tasks where\n  ``assigned_role == user.role``\
+        \ and (if jurisdiction is set) the parcel\n  belongs to the officer's state.\n\
+        - **CITIZEN**: 403 (enforced by ``require_role``)."
+      operationId: list_tasks_api_v1_workflow_tasks_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by task status (pending, approved, rejected)
+          title: Status
+        description: Filter by task status (pending, approved, rejected)
+      - name: assigned_role
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by assigned_role
+          title: Assigned Role
+        description: Filter by assigned_role
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_list_WorkflowTask__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/workflow/{task_id}/approve:
+    post:
+      tags:
+      - Workflow
+      summary: Approve a workflow task
+      description: "Approve a pending workflow task.\n\n- Returns 404 if the task\
+        \ does not exist.\n- Returns 400 if the task is not in ``pending`` status.\n\
+        - Returns 403 if the caller's role does not match the task's required\n  approver\
+        \ role (unless STATE_ADMIN or NATL_ADMIN).\n- Writes an audit entry inside\
+        \ the same DB transaction before committing.\n- Publishes ``{task_type.lower()}.approved``\
+        \ to Redis after commit."
+      operationId: approve_task_api_v1_workflow__task_id__approve_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Task Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowApproveRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_WorkflowActionResponse_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/workflow/{task_id}/reject:
+    post:
+      tags:
+      - Workflow
+      summary: Reject a workflow task
+      description: "Reject a pending workflow task.\n\n- Returns 404 if the task does\
+        \ not exist.\n- Returns 400 if the task is not in ``pending`` status.\n- Returns\
+        \ 403 if the caller's role does not match the task's required\n  approver\
+        \ role (unless STATE_ADMIN or NATL_ADMIN).\n- Writes an audit entry inside\
+        \ the same DB transaction before committing.\n- No Redis event is published\
+        \ for rejections."
+      operationId: reject_task_api_v1_workflow__task_id__reject_post
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: task_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Task Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowRejectRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_WorkflowActionResponse_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/workflow/events/stream:
+    get:
+      tags:
+      - Workflow
+      summary: SSE stream of workflow events
+      description: "Server-Sent Events endpoint for real-time workflow notifications.\n\
+        \nSubscribes to Redis channels:\n  - ``mutation.approved``\n  - ``zoning.approved``\n\
+        \  - ``tax.approved``\n  - ``registration.completed``\n\nEach event is yielded\
+        \ as::\n\n    data: {\"channel\": \"...\", \"payload\": {...}}\n\n\n\nThe\
+        \ connection runs until the client disconnects. CITIZEN \u2192 403."
+      operationId: stream_events_api_v1_workflow_events_stream_get
+      responses:
+        '200':
+          description: Successful Response
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/citizen/service-request:
+    post:
+      tags:
+      - Citizen
+      summary: Submit a citizen service request
+      description: 'Insert a new CitizenServiceRequest row and write an audit entry.
+
+
+        - Only CITIZEN role may call this endpoint.
+
+        - Generates a UUID for the new request.
+
+        - Writes audit action ``CITIZEN_SERVICE_REQUEST`` inside the same transaction.
+
+        - Commits both the service request row and the audit entry atomically.
+
+        - Returns minimal confirmation: ``{request_id, status}``.'
+      operationId: create_service_request_api_v1_citizen_service_request_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CitizenServiceRequestCreate'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_CitizenServiceRequestSubmitted_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/citizen/requests:
+    get:
+      tags:
+      - Citizen
+      summary: List the calling citizen's service requests
+      description: "Return all service requests submitted by the calling citizen.\n\
+        \nResults are scoped strictly to ``current_user.username`` \u2014 a citizen\
+        \ cannot\nsee another citizen's requests. An optional ``?status=`` query param\
+        \ narrows\nresults to a single status value."
+      operationId: list_citizen_requests_api_v1_citizen_requests_get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by request status (submitted/approved/rejected)
+          title: Status
+        description: Filter by request status (submitted/approved/rejected)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_list_CitizenServiceRequestResponse__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/citizen/parcels:
+    get:
+      tags:
+      - Citizen
+      summary: Parcels owned by the calling citizen (by name match)
+      description: 'Return parcels whose RoR ``owner_name`` matches the citizen''s
+        username.
+
+
+        Uses a case-insensitive ILIKE ``%<username>%`` pattern so the match is
+
+        partial and accent-insensitive on PostgreSQL. The RoR row is joined with
+
+        the parcels table and results are returned as ``ParcelPublic`` (no geometry).'
+      operationId: get_citizen_parcels_api_v1_citizen_parcels_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_list_ParcelPublic__'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/admin/state-adapter/{state_code}:
+    get:
+      tags:
+      - Admin
+      summary: Get state adapter config for a state
+      description: "Return all adapter config rows for the given state.\n\n- ``STATE_ADMIN``\
+        \ may only retrieve config for their own jurisdiction\n  (``user.jurisdiction``\
+        \ must match ``state_code``).\n- ``NATL_ADMIN`` may retrieve config for any\
+        \ state."
+      operationId: get_state_adapter_api_v1_admin_state_adapter__state_code__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: state_code
+        in: path
+        required: true
+        schema:
+          type: string
+          title: State Code
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_list_StateAdapterConfig__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Admin
+      summary: Update state adapter config for a state (NATL_ADMIN only)
+      description: 'Partially update all StateAdapterConfig rows for a given state.
+
+
+        Only fields explicitly provided in the request body are modified
+
+        (partial update via ``exclude_unset=True``).
+
+
+        Writes a single ``UPDATE_STATE_ADAPTER`` audit entry in the same DB
+
+        transaction (before ``db.commit()``), per the audit-chain contract.
+
+
+        Returns the full updated config list for the state.'
+      operationId: update_state_adapter_api_v1_admin_state_adapter__state_code__put
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: state_code
+        in: path
+        required: true
+        schema:
+          type: string
+          title: State Code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StateAdapterConfigUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_list_StateAdapterConfig__'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/admin/users:
+    get:
+      tags:
+      - Admin
+      summary: List users (STATE_ADMIN sees own jurisdiction; NATL_ADMIN sees all)
+      description: "Return a list of User records with ``hashed_password`` never included.\n\
+        \n- ``STATE_ADMIN`` receives only users whose ``jurisdiction`` matches the\n\
+        \  caller's own ``jurisdiction``.\n- ``NATL_ADMIN`` receives all users across\
+        \ all jurisdictions."
+      operationId: list_users_api_v1_admin_users_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_list_UserInternal__'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/analytics/national:
+    get:
+      tags:
+      - Analytics
+      summary: National aggregate statistics (NATL_ADMIN only)
+      description: "Return national aggregate dashboard data:\n\n- Total parcel count\
+        \ across all states.\n- Parcel count grouped by state_code.\n- Number of zoning\
+        \ rows where violation_flag is True.\n- Number of workflow_tasks rows where\
+        \ status == 'pending'.\n- Number of registrations where fraud_flagged is True\
+        \  (skipped \u2014 field absent \u2192 0)."
+      operationId: get_national_analytics_api_v1_analytics_national_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_NationalAnalytics_'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/analytics/state/{state_code}:
+    get:
+      tags:
+      - Analytics
+      summary: State-level aggregate statistics (STATE_ADMIN own state or NATL_ADMIN)
+      description: "Return aggregate dashboard data scoped to *state_code*.\n\n- ``STATE_ADMIN``\
+        \ may only query their own jurisdiction; a mismatch \u2192 403.\n- ``NATL_ADMIN``\
+        \ may query any state.\n\nAggregates (all scoped via JOIN to parcels.state_code):\n\
+        - Total parcel count in the state.\n- Zoning violations within the state.\n\
+        - Pending workflow_tasks within the state.\n- Sum of tax.arrears across the\
+        \ state."
+      operationId: get_state_analytics_api_v1_analytics_state__state_code__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: state_code
+        in: path
+        required: true
+        schema:
+          type: string
+          title: State Code
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_StateAnalytics_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/analytics/audit/{ulpin}:
+    get:
+      tags:
+      - Analytics
+      summary: Hash-chained audit trail for a parcel (all authenticated roles)
+      description: 'Return the audit log chain for the given ULPIN, ordered by id
+        ascending
+
+        (chain order).
+
+
+        - CITIZEN callers receive ``AuditLogPublic`` (actor_user, hash, prev_hash
+        omitted).
+
+        - Any officer or admin role receives ``AuditLogInternal`` (full chain fields).
+
+
+        The filter is ``resource_id == ulpin``; this is the join key across the platform.'
+      operationId: get_audit_chain_api_v1_analytics_audit__ulpin__get
+      security:
+      - OAuth2PasswordBearer: []
+      parameters:
+      - name: ulpin
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Ulpin
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_Union_list_AuditLogPublic___list_AuditLogInternal___'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/ml/change-detection:
+    post:
+      tags:
+      - ML
+      summary: Satellite image change detection (FAR violation check)
+      description: "Compare before/after satellite images to detect FAR changes and\
+        \ flag violations.\n\n- Requires role PLAN_OFF, STATE_ADMIN, or NATL_ADMIN.\n\
+        - Fetches the parcel to obtain ``area_sqm``; returns 404 if not found.\n-\
+        \ Runs the OpenCV-based change detection model.\n- If a violation is detected\
+        \ (or FAR changed), updates the ``Zoning`` row's\n  ``far_existing`` and ``violation_flag``\
+        \ fields.\n- Writes an ML_CHANGE_DETECTION audit entry inside the same DB\
+        \ transaction\n  before committing."
+      operationId: detect_change_api_v1_ml_change_detection_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_detect_change_api_v1_ml_change_detection_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_ChangeDetectionResponse_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/ml/fraud-score:
+    post:
+      tags:
+      - ML
+      summary: Fraud / anomaly scoring for a registration transaction
+      description: "Score a deed registration transaction for fraud using an IsolationForest\
+        \ model.\n\n- Requires role REG_OFF, STATE_ADMIN, or NATL_ADMIN.\n- Fetches\
+        \ the parcel to obtain ``area_sqm``; returns 404 if not found.\n- Runs the\
+        \ scikit-learn fraud-scoring model.\n- Writes an ML_FRAUD_SCORE audit entry\
+        \ inside the same DB transaction\n  before committing."
+      operationId: score_fraud_api_v1_ml_fraud_score_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FraudScoreRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_FraudScoreResponse_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+  /api/v1/ml/ocr-extract:
+    post:
+      tags:
+      - ML
+      summary: OCR field extraction from a RoR scan image
+      description: "Extract structured land-record fields from a RoR document scan\
+        \ via OCR.\n\n- Requires role REV_OFF, STATE_ADMIN, or NATL_ADMIN.\n- Preprocesses\
+        \ the image with OpenCV and runs pytesseract.\n- Extracts owner name, survey/khasra\
+        \ number, and khatauni number.\n- Writes an ML_OCR_EXTRACT audit entry inside\
+        \ the same DB transaction\n  before committing."
+      operationId: ocr_extract_api_v1_ml_ocr_extract_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_ocr_extract_api_v1_ml_ocr_extract_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Envelope_OcrExtractResponse_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - OAuth2PasswordBearer: []
+components:
+  schemas:
+    AuditLogInternal:
+      properties:
+        actor_role:
+          type: string
+          title: Actor Role
+        action:
+          type: string
+          title: Action
+        resource_type:
+          type: string
+          title: Resource Type
+        resource_id:
+          type: string
+          title: Resource Id
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+        id:
+          type: integer
+          title: Id
+        actor_user:
+          type: string
+          title: Actor User
+        hash:
+          type: string
+          title: Hash
+        prev_hash:
+          type: string
+          title: Prev Hash
+      type: object
+      required:
+      - actor_role
+      - action
+      - resource_type
+      - resource_id
+      - timestamp
+      - id
+      - actor_user
+      - hash
+      - prev_hash
+      title: AuditLogInternal
+      description: "Full audit entry for officer/admin callers \u2014 includes identity\
+        \ and chain fields."
+    AuditLogPublic:
+      properties:
+        actor_role:
+          type: string
+          title: Actor Role
+        action:
+          type: string
+          title: Action
+        resource_type:
+          type: string
+          title: Resource Type
+        resource_id:
+          type: string
+          title: Resource Id
+        timestamp:
+          type: string
+          format: date-time
+          title: Timestamp
+      type: object
+      required:
+      - actor_role
+      - action
+      - resource_type
+      - resource_id
+      - timestamp
+      title: AuditLogPublic
+      description: "Citizen-visible audit entry \u2014 actor_user, hash, prev_hash\
+        \ are omitted."
+    Body_detect_change_api_v1_ml_change_detection_post:
+      properties:
+        before_image:
+          type: string
+          contentMediaType: application/octet-stream
+          title: Before Image
+          description: Satellite image before the event
+        after_image:
+          type: string
+          contentMediaType: application/octet-stream
+          title: After Image
+          description: Satellite image after the event
+        ulpin:
+          type: string
+          title: Ulpin
+          description: Universal Land Parcel Identification Number
+        far_permitted:
+          type: number
+          title: Far Permitted
+          description: Permitted FAR for the parcel
+      type: object
+      required:
+      - before_image
+      - after_image
+      - ulpin
+      - far_permitted
+      title: Body_detect_change_api_v1_ml_change_detection_post
+    Body_ocr_extract_api_v1_ml_ocr_extract_post:
+      properties:
+        image:
+          type: string
+          contentMediaType: application/octet-stream
+          title: Image
+          description: JPEG/PNG/TIFF scan of the Record of Rights
+        state_code:
+          type: string
+          title: State Code
+          description: ISO state code (e.g. 'CH', 'TN')
+      type: object
+      required:
+      - image
+      - state_code
+      title: Body_ocr_extract_api_v1_ml_ocr_extract_post
+    BuildingPermissionCreate:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        approval_no:
+          type: string
+          title: Approval No
+        approved_built_up_area:
+          type: number
+          title: Approved Built Up Area
+        approval_date:
+          type: string
+          format: date
+          title: Approval Date
+        status:
+          type: string
+          title: Status
+        architect_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Architect Ref
+      type: object
+      required:
+      - ulpin
+      - approval_no
+      - approved_built_up_area
+      - approval_date
+      - status
+      title: BuildingPermissionCreate
+      description: Request body for POST /building-permission (PLAN_OFF, STATE_ADMIN,
+        NATL_ADMIN).
+    BuildingPermissionPublic:
+      properties:
+        id:
+          type: integer
+          title: Id
+        ulpin:
+          type: string
+          title: Ulpin
+        approval_no:
+          type: string
+          title: Approval No
+        approved_built_up_area:
+          type: number
+          title: Approved Built Up Area
+        approval_date:
+          type: string
+          format: date
+          title: Approval Date
+        status:
+          type: string
+          title: Status
+        architect_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Architect Ref
+      type: object
+      required:
+      - id
+      - ulpin
+      - approval_no
+      - approved_built_up_area
+      - approval_date
+      - status
+      title: BuildingPermissionPublic
+      description: "Building permission record \u2014 fully public."
+    ChangeDetectionResponse:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        changed_area_sqm:
+          type: number
+          title: Changed Area Sqm
+        far_existing_est:
+          type: number
+          title: Far Existing Est
+        violation_flag:
+          type: boolean
+          title: Violation Flag
+      type: object
+      required:
+      - ulpin
+      - changed_area_sqm
+      - far_existing_est
+      - violation_flag
+      title: ChangeDetectionResponse
+      description: Response payload for POST /ml/change-detection.
+    CitizenServiceRequestCreate:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        service_type:
+          type: string
+          title: Service Type
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+      type: object
+      required:
+      - ulpin
+      - service_type
+      title: CitizenServiceRequestCreate
+      description: Request body for POST /citizen/service-request (CITIZEN only).
+    CitizenServiceRequestResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+        ulpin:
+          type: string
+          title: Ulpin
+        citizen_username:
+          type: string
+          title: Citizen Username
+        service_type:
+          type: string
+          title: Service Type
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+        status:
+          type: string
+          title: Status
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+      type: object
+      required:
+      - id
+      - ulpin
+      - citizen_username
+      - service_type
+      - status
+      - created_at
+      title: CitizenServiceRequestResponse
+      description: "Citizen service request \u2014 citizen sees own requests; officers\
+        \ see all."
+    CitizenServiceRequestSubmitted:
+      properties:
+        request_id:
+          type: string
+          title: Request Id
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - request_id
+      - status
+      title: CitizenServiceRequestSubmitted
+      description: Minimal confirmation returned immediately after submission.
+    EncumbranceCreate:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        type:
+          type: string
+          title: Type
+        institution:
+          type: string
+          title: Institution
+        status:
+          type: string
+          title: Status
+        date:
+          type: string
+          format: date
+          title: Date
+      type: object
+      required:
+      - ulpin
+      - type
+      - institution
+      - status
+      - date
+      title: EncumbranceCreate
+      description: Request body for POST /encumbrance (REG_OFF, STATE_ADMIN, NATL_ADMIN).
+    EncumbrancePublic:
+      properties:
+        id:
+          type: integer
+          title: Id
+        ulpin:
+          type: string
+          title: Ulpin
+        type:
+          type: string
+          title: Type
+        institution:
+          type: string
+          title: Institution
+        status:
+          type: string
+          title: Status
+        date:
+          type: string
+          format: date
+          title: Date
+      type: object
+      required:
+      - id
+      - ulpin
+      - type
+      - institution
+      - status
+      - date
+      title: EncumbrancePublic
+      description: "Encumbrance record \u2014 fully public per transparency rules.\n\
+        \ninstitution and status are always shown publicly so prospective\nbuyers/lenders\
+        \ can verify encumbrance status."
+    Envelope_BuildingPermissionPublic_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/BuildingPermissionPublic'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[BuildingPermissionPublic]
+    Envelope_ChangeDetectionResponse_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/ChangeDetectionResponse'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[ChangeDetectionResponse]
+    Envelope_CitizenServiceRequestSubmitted_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/CitizenServiceRequestSubmitted'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[CitizenServiceRequestSubmitted]
+    Envelope_EncumbrancePublic_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/EncumbrancePublic'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[EncumbrancePublic]
+    Envelope_FraudScoreResponse_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/FraudScoreResponse'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[FraudScoreResponse]
+    Envelope_List_BuildingPermissionPublic__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/BuildingPermissionPublic'
+            type: array
+          - type: 'null'
+          title: Data
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[List[BuildingPermissionPublic]]
+    Envelope_List_EncumbrancePublic__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/EncumbrancePublic'
+            type: array
+          - type: 'null'
+          title: Data
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[List[EncumbrancePublic]]
+    Envelope_LoginResponse_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/LoginResponse'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[LoginResponse]
+    Envelope_NationalAnalytics_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/NationalAnalytics'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[NationalAnalytics]
+    Envelope_OcrExtractResponse_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/OcrExtractResponse'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[OcrExtractResponse]
+    Envelope_ParcelInternal_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/ParcelInternal'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[ParcelInternal]
+    Envelope_RefreshResponse_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/RefreshResponse'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[RefreshResponse]
+    Envelope_RegistrationInternal_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/RegistrationInternal'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[RegistrationInternal]
+    Envelope_RorInternal_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/RorInternal'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[RorInternal]
+    Envelope_StateAnalytics_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/StateAnalytics'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[StateAnalytics]
+    Envelope_TaxInternal_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/TaxInternal'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[TaxInternal]
+    Envelope_Union_RegistrationPublic__RegistrationInternal__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/RegistrationPublic'
+          - $ref: '#/components/schemas/RegistrationInternal'
+          - type: 'null'
+          title: Data
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[Union[RegistrationPublic, RegistrationInternal]]
+    Envelope_Union_RorPublic__RorInternal__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/RorPublic'
+          - $ref: '#/components/schemas/RorInternal'
+          - type: 'null'
+          title: Data
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[Union[RorPublic, RorInternal]]
+    Envelope_Union_list_AuditLogPublic___list_AuditLogInternal___:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/AuditLogPublic'
+            type: array
+          - items:
+              $ref: '#/components/schemas/AuditLogInternal'
+            type: array
+          - type: 'null'
+          title: Data
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[Union[list[AuditLogPublic], list[AuditLogInternal]]]
+    Envelope_WorkflowActionResponse_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/WorkflowActionResponse'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[WorkflowActionResponse]
+    Envelope_ZoningPublic_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - $ref: '#/components/schemas/ZoningPublic'
+          - type: 'null'
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[ZoningPublic]
+    Envelope_dict_:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Data
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[dict]
+    Envelope_list_CitizenServiceRequestResponse__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/CitizenServiceRequestResponse'
+            type: array
+          - type: 'null'
+          title: Data
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[list[CitizenServiceRequestResponse]]
+    Envelope_list_ParcelPublic__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/ParcelPublic'
+            type: array
+          - type: 'null'
+          title: Data
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[list[ParcelPublic]]
+    Envelope_list_StateAdapterConfig__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/StateAdapterConfig'
+            type: array
+          - type: 'null'
+          title: Data
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[list[StateAdapterConfig]]
+    Envelope_list_Union_RegistrationPublic__RegistrationInternal___:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - items:
+              anyOf:
+              - $ref: '#/components/schemas/RegistrationPublic'
+              - $ref: '#/components/schemas/RegistrationInternal'
+            type: array
+          - type: 'null'
+          title: Data
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[list[Union[RegistrationPublic, RegistrationInternal]]]
+    Envelope_list_UserInternal__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/UserInternal'
+            type: array
+          - type: 'null'
+          title: Data
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[list[UserInternal]]
+    Envelope_list_WorkflowTask__:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        data:
+          anyOf:
+          - items:
+              $ref: '#/components/schemas/WorkflowTask'
+            type: array
+          - type: 'null'
+          title: Data
+        errors:
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+          type: array
+          title: Errors
+          default: []
+      type: object
+      required:
+      - success
+      title: Envelope[list[WorkflowTask]]
+    ErrorDetail:
+      properties:
+        code:
+          type: string
+          title: Code
+        message:
+          type: string
+          title: Message
+        field:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Field
+      type: object
+      required:
+      - code
+      - message
+      title: ErrorDetail
+      description: A single structured error item carried inside an error envelope.
+    FraudScoreRequest:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        deed_no:
+          type: string
+          title: Deed No
+        transaction_value:
+          type: number
+          title: Transaction Value
+      type: object
+      required:
+      - ulpin
+      - deed_no
+      - transaction_value
+      title: FraudScoreRequest
+    FraudScoreResponse:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        deed_no:
+          type: string
+          title: Deed No
+        fraud_score:
+          type: number
+          title: Fraud Score
+        flagged:
+          type: boolean
+          title: Flagged
+      type: object
+      required:
+      - ulpin
+      - deed_no
+      - fraud_score
+      - flagged
+      title: FraudScoreResponse
+      description: Response payload for POST /ml/fraud-score.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    LoginRequest:
+      properties:
+        username:
+          type: string
+          title: Username
+        password:
+          type: string
+          title: Password
+      type: object
+      required:
+      - username
+      - password
+      title: LoginRequest
+      description: Request body for POST /auth/login.
+    LoginResponse:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        refresh_token:
+          type: string
+          title: Refresh Token
+        token_type:
+          type: string
+          title: Token Type
+          default: bearer
+        role:
+          type: string
+          title: Role
+        jurisdiction:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Jurisdiction
+      type: object
+      required:
+      - access_token
+      - refresh_token
+      - role
+      - jurisdiction
+      title: LoginResponse
+      description: "Successful login \u2014 returns both JWT tokens plus caller's\
+        \ role metadata."
+    NationalAnalytics:
+      properties:
+        parcels_total:
+          type: integer
+          title: Parcels Total
+        by_state:
+          additionalProperties:
+            type: integer
+          type: object
+          title: By State
+        violations:
+          type: integer
+          title: Violations
+        pending_mutations:
+          type: integer
+          title: Pending Mutations
+        fraud_flags:
+          type: integer
+          title: Fraud Flags
+      type: object
+      required:
+      - parcels_total
+      - by_state
+      - violations
+      - pending_mutations
+      - fraud_flags
+      title: NationalAnalytics
+      description: Aggregate stats returned by GET /analytics/national (NATL_ADMIN
+        only).
+    OcrExtractResponse:
+      properties:
+        owner_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Name
+        survey_or_khasra_no:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Survey Or Khasra No
+        khatauni_no:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Khatauni No
+        confidence:
+          type: number
+          title: Confidence
+        raw_text:
+          type: string
+          title: Raw Text
+      type: object
+      required:
+      - owner_name
+      - survey_or_khasra_no
+      - khatauni_no
+      - confidence
+      - raw_text
+      title: OcrExtractResponse
+      description: Response payload for POST /ml/ocr-extract.
+    ParcelCreate:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        state_code:
+          type: string
+          title: State Code
+        district:
+          type: string
+          title: District
+        tehsil:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tehsil
+        village_or_city:
+          type: string
+          title: Village Or City
+        area_sqm:
+          type: number
+          title: Area Sqm
+        survey_or_khasra_no:
+          type: string
+          title: Survey Or Khasra No
+        source_system:
+          type: string
+          title: Source System
+        geom:
+          type: string
+          title: Geom
+      type: object
+      required:
+      - ulpin
+      - state_code
+      - district
+      - village_or_city
+      - area_sqm
+      - survey_or_khasra_no
+      - source_system
+      - geom
+      title: ParcelCreate
+      description: Request body for POST /parcels (REV_OFF, STATE_ADMIN, NATL_ADMIN).
+    ParcelInternal:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        state_code:
+          type: string
+          title: State Code
+        district:
+          type: string
+          title: District
+        village_or_city:
+          type: string
+          title: Village Or City
+        area_sqm:
+          type: number
+          title: Area Sqm
+        survey_or_khasra_no:
+          type: string
+          title: Survey Or Khasra No
+        tehsil:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tehsil
+        source_system:
+          type: string
+          title: Source System
+        last_synced_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Last Synced At
+        geom:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Geom
+      type: object
+      required:
+      - ulpin
+      - state_code
+      - district
+      - village_or_city
+      - area_sqm
+      - survey_or_khasra_no
+      - source_system
+      title: ParcelInternal
+      description: "Full parcel data for officer/admin callers \u2014 includes geometry\
+        \ and sync info."
+    ParcelPublic:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        state_code:
+          type: string
+          title: State Code
+        district:
+          type: string
+          title: District
+        village_or_city:
+          type: string
+          title: Village Or City
+        area_sqm:
+          type: number
+          title: Area Sqm
+        survey_or_khasra_no:
+          type: string
+          title: Survey Or Khasra No
+      type: object
+      required:
+      - ulpin
+      - state_code
+      - district
+      - village_or_city
+      - area_sqm
+      - survey_or_khasra_no
+      title: ParcelPublic
+      description: 'Citizen-visible parcel data: no full polygon geometry.'
+    RefreshRequest:
+      properties:
+        refresh_token:
+          type: string
+          title: Refresh Token
+      type: object
+      required:
+      - refresh_token
+      title: RefreshRequest
+      description: Request body for POST /auth/refresh.
+    RefreshResponse:
+      properties:
+        access_token:
+          type: string
+          title: Access Token
+        token_type:
+          type: string
+          title: Token Type
+          default: bearer
+      type: object
+      required:
+      - access_token
+      title: RefreshResponse
+      description: New access token issued on a valid refresh.
+    RegistrationCreate:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        deed_no:
+          type: string
+          title: Deed No
+        deed_type:
+          type: string
+          title: Deed Type
+        registration_date:
+          type: string
+          format: date
+          title: Registration Date
+        sro_office:
+          type: string
+          title: Sro Office
+        buyer:
+          type: string
+          title: Buyer
+        seller:
+          type: string
+          title: Seller
+        transaction_value:
+          type: integer
+          title: Transaction Value
+        stamp_duty_paid:
+          type: boolean
+          title: Stamp Duty Paid
+          default: false
+      type: object
+      required:
+      - ulpin
+      - deed_no
+      - deed_type
+      - registration_date
+      - sro_office
+      - buyer
+      - seller
+      - transaction_value
+      title: RegistrationCreate
+      description: Request body for POST /registration (REG_OFF, STATE_ADMIN, NATL_ADMIN).
+    RegistrationInternal:
+      properties:
+        id:
+          type: integer
+          title: Id
+        ulpin:
+          type: string
+          title: Ulpin
+        deed_no:
+          type: string
+          title: Deed No
+        deed_type:
+          type: string
+          title: Deed Type
+        registration_date:
+          type: string
+          format: date
+          title: Registration Date
+        sro_office:
+          type: string
+          title: Sro Office
+        buyer:
+          type: string
+          title: Buyer
+        seller:
+          type: string
+          title: Seller
+        stamp_duty_paid:
+          type: boolean
+          title: Stamp Duty Paid
+        transaction_value:
+          type: integer
+          title: Transaction Value
+      type: object
+      required:
+      - id
+      - ulpin
+      - deed_no
+      - deed_type
+      - registration_date
+      - sro_office
+      - buyer
+      - seller
+      - stamp_duty_paid
+      - transaction_value
+      title: RegistrationInternal
+      description: Full registration record for REG_OFF/STATE_ADMIN/NATL_ADMIN callers.
+    RegistrationPublic:
+      properties:
+        id:
+          type: integer
+          title: Id
+        ulpin:
+          type: string
+          title: Ulpin
+        deed_no:
+          type: string
+          title: Deed No
+        deed_type:
+          type: string
+          title: Deed Type
+        registration_date:
+          type: string
+          format: date
+          title: Registration Date
+        sro_office:
+          type: string
+          title: Sro Office
+        buyer:
+          type: string
+          title: Buyer
+        seller:
+          type: string
+          title: Seller
+        stamp_duty_paid:
+          type: boolean
+          title: Stamp Duty Paid
+      type: object
+      required:
+      - id
+      - ulpin
+      - deed_no
+      - deed_type
+      - registration_date
+      - sro_office
+      - buyer
+      - seller
+      - stamp_duty_paid
+      title: RegistrationPublic
+      description: "Citizen-visible registration record \u2014 transaction_value is\
+        \ omitted.\n\nbuyer and seller names should be masked with mask_name() before\
+        \ constructing\nthis schema."
+    RorInternal:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        owner_name:
+          type: string
+          title: Owner Name
+        tenure_type:
+          type: string
+          title: Tenure Type
+        khatauni_no:
+          type: string
+          title: Khatauni No
+        land_use_type:
+          type: string
+          title: Land Use Type
+        mutation_status:
+          type: string
+          title: Mutation Status
+        last_updated:
+          type: string
+          format: date
+          title: Last Updated
+      type: object
+      required:
+      - ulpin
+      - owner_name
+      - tenure_type
+      - khatauni_no
+      - land_use_type
+      - mutation_status
+      - last_updated
+      title: RorInternal
+      description: "Full RoR record for officer/admin callers \u2014 no additional\
+        \ masking."
+    RorPublic:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        owner_name:
+          type: string
+          title: Owner Name
+        tenure_type:
+          type: string
+          title: Tenure Type
+        khatauni_no:
+          type: string
+          title: Khatauni No
+        land_use_type:
+          type: string
+          title: Land Use Type
+        mutation_status:
+          type: string
+          title: Mutation Status
+        last_updated:
+          type: string
+          format: date
+          title: Last Updated
+      type: object
+      required:
+      - ulpin
+      - owner_name
+      - tenure_type
+      - khatauni_no
+      - land_use_type
+      - mutation_status
+      - last_updated
+      title: RorPublic
+      description: 'Citizen-visible RoR record.
+
+
+        owner_name is stored unmasked in the DB; routers must call mask_owner_name()
+
+        before constructing this schema (or use a validator at serialisation time).'
+    RorUpdate:
+      properties:
+        owner_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner Name
+        tenure_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Tenure Type
+        khatauni_no:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Khatauni No
+        land_use_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Land Use Type
+        mutation_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Mutation Status
+      type: object
+      title: RorUpdate
+      description: Request body for PUT /ror/{ulpin} (REV_OFF, STATE_ADMIN, NATL_ADMIN).
+    StateAdapterConfig:
+      properties:
+        id:
+          type: integer
+          title: Id
+        state_code:
+          type: string
+          title: State Code
+        source_field_name:
+          type: string
+          title: Source Field Name
+        canonical_field_name:
+          type: string
+          title: Canonical Field Name
+        unit_conversion_factor:
+          type: number
+          title: Unit Conversion Factor
+        language_code:
+          type: string
+          title: Language Code
+      type: object
+      required:
+      - id
+      - state_code
+      - source_field_name
+      - canonical_field_name
+      - unit_conversion_factor
+      - language_code
+      title: StateAdapterConfig
+      description: State adapter mapping record.
+    StateAdapterConfigUpdate:
+      properties:
+        source_field_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Field Name
+        canonical_field_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Canonical Field Name
+        unit_conversion_factor:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Unit Conversion Factor
+        language_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Language Code
+      type: object
+      title: StateAdapterConfigUpdate
+      description: Request body for NATL_ADMIN updating a state adapter mapping.
+    StateAnalytics:
+      properties:
+        parcels_total:
+          type: integer
+          title: Parcels Total
+        violations:
+          type: integer
+          title: Violations
+        pending_mutations:
+          type: integer
+          title: Pending Mutations
+        arrears_total:
+          type: integer
+          title: Arrears Total
+      type: object
+      required:
+      - parcels_total
+      - violations
+      - pending_mutations
+      - arrears_total
+      title: StateAnalytics
+      description: Aggregate stats returned by GET /analytics/state/{state_code}.
+    TaxInternal:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        assessment_id:
+          type: string
+          title: Assessment Id
+        payment_status:
+          type: string
+          title: Payment Status
+        arrears:
+          type: integer
+          title: Arrears
+        last_paid_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Last Paid Date
+        annual_tax:
+          type: integer
+          title: Annual Tax
+      type: object
+      required:
+      - ulpin
+      - assessment_id
+      - payment_status
+      - arrears
+      - annual_tax
+      title: TaxInternal
+      description: Full tax record for TAX_OFF/STATE_ADMIN/NATL_ADMIN callers.
+    TaxUpdate:
+      properties:
+        annual_tax:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Annual Tax
+        payment_status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Payment Status
+        arrears:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Arrears
+      type: object
+      title: TaxUpdate
+      description: Request body for PUT /tax/{ulpin} (TAX_OFF, STATE_ADMIN, NATL_ADMIN).
+    UserInternal:
+      properties:
+        username:
+          type: string
+          title: Username
+        role:
+          type: string
+          title: Role
+        jurisdiction:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Jurisdiction
+        is_active:
+          type: boolean
+          title: Is Active
+      type: object
+      required:
+      - username
+      - role
+      - is_active
+      title: UserInternal
+      description: "User record returned by admin endpoints \u2014 hashed_password\
+        \ is NEVER included."
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    WorkflowActionResponse:
+      properties:
+        task_id:
+          type: integer
+          title: Task Id
+        status:
+          type: string
+          title: Status
+        next_event:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next Event
+      type: object
+      required:
+      - task_id
+      - status
+      title: WorkflowActionResponse
+      description: Response from approve or reject workflow actions.
+    WorkflowApproveRequest:
+      properties:
+        comment:
+          type: string
+          title: Comment
+      type: object
+      required:
+      - comment
+      title: WorkflowApproveRequest
+      description: Request body for POST /workflow/{taskId}/approve.
+    WorkflowRejectRequest:
+      properties:
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - reason
+      title: WorkflowRejectRequest
+      description: Request body for POST /workflow/{taskId}/reject.
+    WorkflowTask:
+      properties:
+        id:
+          type: integer
+          title: Id
+        ulpin:
+          type: string
+          title: Ulpin
+        task_type:
+          type: string
+          title: Task Type
+        assigned_role:
+          type: string
+          title: Assigned Role
+        status:
+          type: string
+          title: Status
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        resolved_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Resolved At
+        comment:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Comment
+      type: object
+      required:
+      - id
+      - ulpin
+      - task_type
+      - assigned_role
+      - status
+      - created_at
+      title: WorkflowTask
+      description: "Workflow task \u2014 visible to officers and admins only (not\
+        \ CITIZEN)."
+    ZoningPublic:
+      properties:
+        ulpin:
+          type: string
+          title: Ulpin
+        master_plan_zone:
+          type: string
+          title: Master Plan Zone
+        permissible_use:
+          type: string
+          title: Permissible Use
+        far_permitted:
+          type: number
+          title: Far Permitted
+        far_existing:
+          type: number
+          title: Far Existing
+        violation_flag:
+          type: boolean
+          title: Violation Flag
+      type: object
+      required:
+      - ulpin
+      - master_plan_zone
+      - permissible_use
+      - far_permitted
+      - far_existing
+      - violation_flag
+      title: ZoningPublic
+      description: "Zoning/master-plan record \u2014 fully public.\n\nFAR data (floor\
+        \ area ratio) and violation flags are intentionally\npublic so citizens can\
+        \ verify compliance."
+    ZoningUpdate:
+      properties:
+        master_plan_zone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Master Plan Zone
+        permissible_use:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Permissible Use
+        far_permitted:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Far Permitted
+      type: object
+      title: ZoningUpdate
+      description: Request body for PUT /zoning/{ulpin} (PLAN_OFF, STATE_ADMIN, NATL_ADMIN).
+  securitySchemes:
+    OAuth2PasswordBearer:
+      type: oauth2
+      flows:
+        password:
+          scopes: {}
+          tokenUrl: /api/v1/auth/login
+
