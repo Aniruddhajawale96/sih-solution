@@ -23,6 +23,10 @@
     "3.6 Write property test for token blacklist": {
       "status": "passed",
       "lastRunTimestamp": 1794763802300
+    },
+    "10.3 Write property test for workflow event chain": {
+      "status": "passed",
+      "lastRunTimestamp": 1794875029633
     }
   },
   "executionHistory": {
@@ -292,6 +296,11 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870374150
+      },
+      {
+        "executionId": "686a59da-a328-4c99-8451-4efe0663bea4",
+        "chatSessionId": "sess_89a81f86-fa1d-4204-b796-f86ae9b05af5",
+        "timestamp": 1794935156718
       }
     ],
     "5.1 Write Public and Internal schemas for Base Layer and security resources in `backend/core/schemas.py` (or per-router schema files)": [
@@ -550,11 +559,6 @@
     ],
     "10.1 Implement `backend/workflow_engine/consumer.py`": [
       {
-        "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
-        "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
-        "timestamp": 1794756731215
-      },
-      {
         "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
         "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
         "timestamp": 1794760734453
@@ -598,6 +602,11 @@
         "executionId": "52d8b6c9-093a-4bac-8018-721bcd96445d",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794873445924
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794874789142
       }
     ],
     "10.2 Implement `backend/routers/workflow.py`": [
@@ -615,6 +624,16 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870374812
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794874792558
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794874963318
       }
     ],
     "11.1 Implement `backend/routers/citizen.py`": [
@@ -736,6 +755,16 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870387644
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794875408956
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794875591657
       }
     ],
     "13.1 Implement `backend/ml/change_detection.py`": [
@@ -753,6 +782,16 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870375703
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794875596038
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794876245112
       }
     ],
     "13.2 Implement `backend/ml/fraud_score.py`": [
@@ -770,6 +809,16 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870375802
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794876248950
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794876826600
       }
     ],
     "13.3 Implement `backend/ml/ocr_extraction.py`": [
@@ -787,6 +836,16 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870375915
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794876830299
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794876942086
       }
     ],
     "13.4 Implement `backend/routers/ml.py` — POST /ml/change-detection, /ml/fraud-score, /ml/ocr-extract": [
@@ -804,6 +863,16 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870376091
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794876945873
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794894686408
       }
     ],
     "14. Checkpoint — full backend green": [
@@ -821,6 +890,21 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870376275
+      },
+      {
+        "executionId": "686a59da-a328-4c99-8451-4efe0663bea4",
+        "chatSessionId": "sess_89a81f86-fa1d-4204-b796-f86ae9b05af5",
+        "timestamp": 1794935157099
+      },
+      {
+        "executionId": "0daaa98d-3762-4f5a-a1a4-9b38993b6e13",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794938526354
+      },
+      {
+        "executionId": "0daaa98d-3762-4f5a-a1a4-9b38993b6e13",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794938572138
       }
     ],
     "16.1 Export `backend/openapi.yaml` from live FastAPI app": [
@@ -838,6 +922,11 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870376604
+      },
+      {
+        "executionId": "686a59da-a328-4c99-8451-4efe0663bea4",
+        "chatSessionId": "sess_89a81f86-fa1d-4204-b796-f86ae9b05af5",
+        "timestamp": 1794935157526
       }
     ],
     "17. Final checkpoint — all tests pass, OpenAPI committed": [
@@ -855,6 +944,11 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870376720
+      },
+      {
+        "executionId": "686a59da-a328-4c99-8451-4efe0663bea4",
+        "chatSessionId": "sess_89a81f86-fa1d-4204-b796-f86ae9b05af5",
+        "timestamp": 1794935157655
       }
     ],
     "1. Scaffold application foundation and core infrastructure": [
@@ -1126,6 +1220,16 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870374912
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794874966965
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794875102452
       }
     ],
     "10.4 Write tests for workflow router (`backend/tests/test_workflow.py`)": [
@@ -1138,6 +1242,16 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870375040
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794875105875
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794875272202
       }
     ],
     "11.2 Write tests for citizen router (`backend/tests/test_citizen.py`)": [
@@ -1150,6 +1264,16 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870375378
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794875276235
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794875405318
       }
     ],
     "13.5 Write tests for ML routes (`backend/tests/test_ml.py`)": [
@@ -1162,6 +1286,21 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870376188
+      },
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794894690178
+      },
+      {
+        "executionId": "686a59da-a328-4c99-8451-4efe0663bea4",
+        "chatSessionId": "sess_89a81f86-fa1d-4204-b796-f86ae9b05af5",
+        "timestamp": 1794935156956
+      },
+      {
+        "executionId": "487cb5c1-a875-4592-918a-149ba719b899",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794935724966
       }
     ],
     "15.1 Write `backend/tests/test_auth.py`": [
@@ -1174,6 +1313,26 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870376378
+      },
+      {
+        "executionId": "686a59da-a328-4c99-8451-4efe0663bea4",
+        "chatSessionId": "sess_89a81f86-fa1d-4204-b796-f86ae9b05af5",
+        "timestamp": 1794935157226
+      },
+      {
+        "executionId": "686a59da-a328-4c99-8451-4efe0663bea4",
+        "chatSessionId": "sess_89a81f86-fa1d-4204-b796-f86ae9b05af5",
+        "timestamp": 1794935164177
+      },
+      {
+        "executionId": "487cb5c1-a875-4592-918a-149ba719b899",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794935734556
+      },
+      {
+        "executionId": "487cb5c1-a875-4592-918a-149ba719b899",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794936776397
       }
     ],
     "15.2 Write property test for jurisdiction scoping": [
@@ -1186,6 +1345,21 @@
         "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794870376488
+      },
+      {
+        "executionId": "686a59da-a328-4c99-8451-4efe0663bea4",
+        "chatSessionId": "sess_89a81f86-fa1d-4204-b796-f86ae9b05af5",
+        "timestamp": 1794935157387
+      },
+      {
+        "executionId": "686a59da-a328-4c99-8451-4efe0663bea4",
+        "chatSessionId": "sess_89a81f86-fa1d-4204-b796-f86ae9b05af5",
+        "timestamp": 1794935164439
+      },
+      {
+        "executionId": "487cb5c1-a875-4592-918a-149ba719b899",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794936780001
       }
     ],
     "3. Security core — JWT auth, RBAC dependencies, audit chain": [
@@ -1207,6 +1381,34 @@
         "executionId": "52d8b6c9-093a-4bac-8018-721bcd96445d",
         "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
         "timestamp": 1794873437620
+      }
+    ],
+    "10. Workflow Engine and Workflow router": [
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794875272475
+      }
+    ],
+    "11. Citizen Services router": [
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794875405514
+      }
+    ],
+    "12. Admin and Analytics routers": [
+      {
+        "executionId": "258ea12d-5ba5-439f-a8b0-7991e06ba220",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794875591974
+      }
+    ],
+    "13. AI/ML modules and routes": [
+      {
+        "executionId": "487cb5c1-a875-4592-918a-149ba719b899",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794935725162
       }
     ]
   }

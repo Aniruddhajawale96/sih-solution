@@ -230,27 +230,27 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
 
 ---
 
-- [ ] 10. Workflow Engine and Workflow router
-  - [ ] 10.1 Implement `backend/workflow_engine/consumer.py`
+- [x] 10. Workflow Engine and Workflow router
+  - [x] 10.1 Implement `backend/workflow_engine/consumer.py`
     - Async Redis subscriber using `redis.asyncio`; subscribe to `registration.completed` and `mutation.approved`
     - `registration.completed` handler: open DB session, `db.add(WorkflowTask(task_type="MUTATION", assigned_role="REV_OFF", status="pending", ulpin=...))`, commit
     - `mutation.approved` handler: load `Tax` row for `ulpin`; call tax-reassessment logic (recalculate `annual_tax` if needed); write audit `REASSESS_TAX`; commit
     - Start consumer as `asyncio.create_task` inside FastAPI lifespan
     - _Requirements: 9.1, 9.2, 9.3_
 
-  - [ ] 10.2 Implement `backend/routers/workflow.py`
+  - [x] 10.2 Implement `backend/routers/workflow.py`
     - `GET /workflow/tasks`: scope to caller's `role` + `jurisdiction`; filterable by `status`, `assigned_role`
     - `POST /workflow/{taskId}/approve`: validate task-type → role match; set `status="approved"`, `resolved_at`, `comment`; write audit; publish `mutation.approved` or `zoning.approved` etc. to Redis; return `{task_id, status, next_event}`
     - `POST /workflow/{taskId}/reject`: set `status="rejected"`; write audit `REJECT_MUTATION`
     - `GET /workflow/events/stream`: SSE endpoint reading from Redis `SUBSCRIBE`; each message emitted as `data: {JSON}\n\n`
     - _Requirements: 8.1, 9.1, 9.2_
 
-  - [ ] 10.3 Write property test for workflow event chain
+  - [x] 10.3 Write property test for workflow event chain
     - **Property 8: Workflow event chain**
     - **Validates: Requirements 9.1**
     - For any `registration.completed` event, assert exactly one `workflow_tasks` row of type `MUTATION` is created with matching `ulpin`
 
-  - [ ] 10.4 Write tests for workflow router (`backend/tests/test_workflow.py`)
+  - [x] 10.4 Write tests for workflow router (`backend/tests/test_workflow.py`)
     - Test approve by correct role → audit + next event; reject by correct role → audit
     - Test approve by wrong role type → 403 (e.g. TAX_OFF cannot approve a MUTATION task)
     - Test SSE stream returns valid event-stream content-type
@@ -258,14 +258,14 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
 
 ---
 
-- [ ] 11. Citizen Services router
+- [x] 11. Citizen Services router
   - [x] 11.1 Implement `backend/routers/citizen.py`
     - `POST /citizen/service-request`: require `CITIZEN`; insert `CitizenServiceRequest`; write audit `CITIZEN_SERVICE_REQUEST`; return 201 `{request_id, status}`
     - `GET /citizen/requests`: require `CITIZEN`; return requests scoped to `current_user.username`
     - `GET /citizen/parcels`: require `CITIZEN`; query `ror.owner_name` ILIKE `%citizen_name%` to find owned parcels; return list of `ParcelPublic`
     - _Requirements: 8.1, 8.4_
 
-  - [ ] 11.2 Write tests for citizen router (`backend/tests/test_citizen.py`)
+  - [x] 11.2 Write tests for citizen router (`backend/tests/test_citizen.py`)
     - Test service request submission returns 201 with `request_id`
     - Test GET /citizen/requests scoped to current user (cannot see other users' requests)
     - Test officer calling `/citizen/service-request` returns 403
@@ -273,14 +273,14 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
 
 ---
 
-- [ ] 12. Admin and Analytics routers
+- [x] 12. Admin and Analytics routers
   - [x] 12.1 Implement `backend/routers/admin.py`
     - `GET /admin/state-adapter/{state_code}`: require `STATE_ADMIN` (own state) or `NATL_ADMIN`; return config list
     - `PUT /admin/state-adapter/{state_code}`: require `NATL_ADMIN`; update config; write audit `UPDATE_STATE_ADAPTER`
     - `GET /admin/users`: require `STATE_ADMIN` (own jurisdiction) or `NATL_ADMIN`; return `UserInternal` list (no `hashed_password`)
     - _Requirements: 8.1, 8.4_
 
-  - [ ] 12.2 Implement `backend/routers/analytics.py`
+  - [x] 12.2 Implement `backend/routers/analytics.py`
     - `GET /analytics/national`: require `NATL_ADMIN`; run aggregate SQL: total parcels, group by state_code, count violations, pending mutations, fraud flags
     - `GET /analytics/state/{state_code}`: require `STATE_ADMIN` (own) or `NATL_ADMIN`; state-scoped aggregates
     - `GET /analytics/audit/{ulpin}`: all roles; return `AuditLogPublic` list for CITIZEN, `AuditLogInternal` for officers; ordered by `id` ascending (chain order)
@@ -288,30 +288,30 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
 
 ---
 
-- [ ] 13. AI/ML modules and routes
-  - [ ] 13.1 Implement `backend/ml/change_detection.py`
+- [x] 13. AI/ML modules and routes
+  - [x] 13.1 Implement `backend/ml/change_detection.py`
     - Accept two image byte arrays; use OpenCV (`cv2.absdiff`, threshold, contour area) to compute `changed_area_sqm`
     - Estimate `far_existing_est` from changed area and parcel `area_sqm`; set `violation_flag = far_existing_est > far_permitted`
     - Return `ChangeDetectionResult` dataclass
     - _Requirements: 10.1_
 
-  - [ ] 13.2 Implement `backend/ml/fraud_score.py`
+  - [x] 13.2 Implement `backend/ml/fraud_score.py`
     - Load pre-trained `IsolationForest` from pickle file (or train on seed registration data at startup if file absent)
     - Feature vector: `[transaction_value, log(transaction_value), area_sqm, value_per_sqm]`
     - `score_transaction(ulpin, deed_no, transaction_value, parcel_area_sqm)` → `{fraud_score: float, flagged: bool}` where `flagged = fraud_score < -0.1`
     - _Requirements: 10.2_
 
-  - [ ] 13.3 Implement `backend/ml/ocr_extraction.py`
+  - [x] 13.3 Implement `backend/ml/ocr_extraction.py`
     - `extract_ror_fields(image_bytes, state_code)` → preprocess with OpenCV (denoise, threshold); run `pytesseract.image_to_string`; apply regex patterns for `owner_name`, `survey_or_khasra_no`, `khatauni_no`; compute `confidence` from pytesseract confidence scores
     - _Requirements: 10.3_
 
-  - [ ] 13.4 Implement `backend/routers/ml.py` — POST /ml/change-detection, /ml/fraud-score, /ml/ocr-extract
+  - [x] 13.4 Implement `backend/routers/ml.py` — POST /ml/change-detection, /ml/fraud-score, /ml/ocr-extract
     - `POST /ml/change-detection`: require `PLAN_OFF, STATE_ADMIN, NATL_ADMIN`; call `change_detection.py`; update `zoning.far_existing` + `violation_flag`; write audit `ML_CHANGE_DETECTION`; return `ChangeDetectionResponse`
     - `POST /ml/fraud-score`: require `REG_OFF, STATE_ADMIN, NATL_ADMIN`; call `fraud_score.py`; write audit `ML_FRAUD_SCORE`; return `FraudScoreResponse`
     - `POST /ml/ocr-extract`: require `REV_OFF, STATE_ADMIN, NATL_ADMIN`; call `ocr_extraction.py`; write audit `ML_OCR_EXTRACT`; return `OcrExtractResponse`
     - _Requirements: 10.1, 10.2, 10.3, 10.4_
 
-  - [ ] 13.5 Write tests for ML routes (`backend/tests/test_ml.py`)
+  - [x] 13.5 Write tests for ML routes (`backend/tests/test_ml.py`)
     - Mock OpenCV/pytesseract/sklearn calls; test each ML route returns correct schema shape
     - Test audit rows are written for each ML action
     - Test wrong role returns 403 on each ML route (CITIZEN, wrong officer type)
@@ -319,14 +319,14 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
 
 ---
 
-- [ ] 14. Checkpoint — full backend green
+- [x] 14. Checkpoint — full backend green
   - Ensure all tests pass, ask the user if questions arise.
 
 ---
 
 - [ ] 15. Auth test suite and jurisdiction property tests
-  - [ ] 15.1 Write `backend/tests/test_auth.py`
-    - Test valid login returns 200 with both tokens
+  - [x] 15.1 Write `backend/tests/test_auth.py`
+    - Test valid login returns 200 wiscm-history-item:d%3A%5Csih-solution?%7B%22repositoryId%22%3A%22scm0_0%22%2C%22historyItemId%22%3A%2249762869533804a4ab9dd4e8a702b4b472441380%22%2C%22historyItemParentId%22%3A%224470c496e720843983052c1e40a2dc4b0db93941%22%2C%22historyItemDisplayId%22%3A%224976286%22%7Dth both tokens
     - Test refresh with valid refresh token returns new access token
     - Test logout blacklists token: subsequent request with same token returns 401
     - Test expired token returns 401
