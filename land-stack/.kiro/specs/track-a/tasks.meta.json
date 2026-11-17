@@ -1,5 +1,30 @@
 {
-  "pbtResults": {},
+  "pbtResults": {
+    "1.3 Write property test for response envelope invariant": {
+      "status": "passed",
+      "lastRunTimestamp": 1794760974866
+    },
+    "5.4 Write property test for CITIZEN field masking": {
+      "status": "passed",
+      "lastRunTimestamp": 1794762909368
+    },
+    "2.5 Write property test for model round-trip serialization": {
+      "status": "passed",
+      "lastRunTimestamp": 1794763039583
+    },
+    "3.7 Write property test for audit chain": {
+      "status": "passed",
+      "lastRunTimestamp": 1794763505500
+    },
+    "3.5 Write property test for role enforcement": {
+      "status": "passed",
+      "lastRunTimestamp": 1794763679746
+    },
+    "3.6 Write property test for token blacklist": {
+      "status": "passed",
+      "lastRunTimestamp": 1794763802300
+    }
+  },
   "executionHistory": {
     "1.1 Create `backend/core/database.py` with SQLAlchemy 2.0 async engine": [
       {
@@ -235,6 +260,21 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756729796
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760732304
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763051767
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763812549
       }
     ],
     "4. Checkpoint — foundation green": [
@@ -242,6 +282,16 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756729910
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760732828
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870374150
       }
     ],
     "5.1 Write Public and Internal schemas for Base Layer and security resources in `backend/core/schemas.py` (or per-router schema files)": [
@@ -322,6 +372,21 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756730459
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760733068
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763828875
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794765648291
       }
     ],
     "7.2 Implement `backend/routers/ror.py`": [
@@ -329,6 +394,21 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756730544
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760733224
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763831945
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794765651518
       }
     ],
     "8.1 Implement `backend/routers/registration.py`": [
@@ -336,6 +416,21 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756730637
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760733462
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763834949
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794765654546
       }
     ],
     "8.2 Implement `backend/routers/encumbrance.py`": [
@@ -343,6 +438,21 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756730748
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760733571
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763838038
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794765657717
       }
     ],
     "8.3 Implement `backend/routers/zoning.py`": [
@@ -350,6 +460,21 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756730848
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760733716
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763841174
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794765660900
       }
     ],
     "8.4 Implement `backend/routers/building_permission.py`": [
@@ -357,6 +482,21 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756730940
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760733842
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794765664071
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794777383615
       }
     ],
     "8.5 Implement `backend/routers/tax.py`": [
@@ -364,6 +504,21 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756731045
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760733973
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794765667051
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794777384035
       }
     ],
     "9. Checkpoint — domain routers green": [
@@ -371,6 +526,26 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756731122
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760734349
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870374571
+      },
+      {
+        "executionId": "5d7b4694-0850-44cc-8657-b1d49c0a5212",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794873521226
+      },
+      {
+        "executionId": "5d7b4694-0850-44cc-8657-b1d49c0a5212",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794874647968
       }
     ],
     "10.1 Implement `backend/workflow_engine/consumer.py`": [
@@ -378,6 +553,51 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756731215
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760734453
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794777394001
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866392606
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866394797
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866485005
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870374689
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870387234
+      },
+      {
+        "executionId": "52d8b6c9-093a-4bac-8018-721bcd96445d",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794871816524
+      },
+      {
+        "executionId": "52d8b6c9-093a-4bac-8018-721bcd96445d",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794873445924
       }
     ],
     "10.2 Implement `backend/routers/workflow.py`": [
@@ -385,6 +605,16 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756731309
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760734595
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870374812
       }
     ],
     "11.1 Implement `backend/routers/citizen.py`": [
@@ -392,6 +622,46 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756731406
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760734847
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794777396956
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866393016
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866395129
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866485093
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870375268
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870387353
+      },
+      {
+        "executionId": "52d8b6c9-093a-4bac-8018-721bcd96445d",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794871802184
       }
     ],
     "12.1 Implement `backend/routers/admin.py`": [
@@ -399,6 +669,46 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756731514
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760735068
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794777400243
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866393337
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866395290
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866485264
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870375498
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870387467
+      },
+      {
+        "executionId": "52d8b6c9-093a-4bac-8018-721bcd96445d",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794871805430
       }
     ],
     "12.2 Implement `backend/routers/analytics.py`": [
@@ -406,6 +716,26 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756731613
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760735192
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866484619
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870375615
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870387644
       }
     ],
     "13.1 Implement `backend/ml/change_detection.py`": [
@@ -413,6 +743,16 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756731713
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760735333
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870375703
       }
     ],
     "13.2 Implement `backend/ml/fraud_score.py`": [
@@ -420,6 +760,16 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756731787
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760735463
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870375802
       }
     ],
     "13.3 Implement `backend/ml/ocr_extraction.py`": [
@@ -427,6 +777,16 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756731867
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760735587
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870375915
       }
     ],
     "13.4 Implement `backend/routers/ml.py` — POST /ml/change-detection, /ml/fraud-score, /ml/ocr-extract": [
@@ -434,6 +794,16 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756731957
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760735712
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870376091
       }
     ],
     "14. Checkpoint — full backend green": [
@@ -441,6 +811,16 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756732050
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760735978
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870376275
       }
     ],
     "16.1 Export `backend/openapi.yaml` from live FastAPI app": [
@@ -448,6 +828,16 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756732141
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760736391
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870376604
       }
     ],
     "17. Final checkpoint — all tests pass, OpenAPI committed": [
@@ -455,6 +845,16 @@
         "executionId": "8a7649a8-ceee-4c21-9352-6ace21434fd9",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794756732233
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760736538
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870376720
       }
     ],
     "1. Scaffold application foundation and core infrastructure": [
@@ -483,6 +883,330 @@
         "executionId": "73e24eff-b1ce-43cf-bea2-cbab46111556",
         "chatSessionId": "sess_35b38f6e-b500-48f9-94e6-406c874142fc",
         "timestamp": 1794759157492
+      }
+    ],
+    "1.3 Write property test for response envelope invariant": [
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760731830
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760742420
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760990642
+      }
+    ],
+    "2.5 Write property test for model round-trip serialization": [
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760732037
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760996142
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794761807726
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794761807936
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794761814530
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763048370
+      }
+    ],
+    "3.5 Write property test for role enforcement": [
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760732437
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763054496
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763815639
+      }
+    ],
+    "3.6 Write property test for token blacklist": [
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760732557
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763057317
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763818919
+      }
+    ],
+    "3.7 Write property test for audit chain": [
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760732696
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763060121
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763821967
+      }
+    ],
+    "5.4 Write property test for CITIZEN field masking": [
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760732926
+      },
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760998932
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794761808067
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794761817307
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763048645
+      }
+    ],
+    "7.3 Write tests for parcel and ror routers (`backend/tests/test_parcel.py`, `backend/tests/test_ror.py`)": [
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760733359
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794777387936
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866388152
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866393749
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866484795
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870374364
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870386692
+      },
+      {
+        "executionId": "52d8b6c9-093a-4bac-8018-721bcd96445d",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794871809258
+      },
+      {
+        "executionId": "52d8b6c9-093a-4bac-8018-721bcd96445d",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794871820122
+      },
+      {
+        "executionId": "52d8b6c9-093a-4bac-8018-721bcd96445d",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794871918184
+      }
+    ],
+    "8.6 Write tests for registration, encumbrance, zoning, building_permission, tax routers": [
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760734095
+      },
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794777391067
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866391838
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866394222
+      },
+      {
+        "executionId": "40927075-b14a-481b-914d-57454a61697a",
+        "chatSessionId": "sess_475b283a-6e01-4c73-bcf1-bdaca48a0bb2",
+        "timestamp": 1794866484914
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870374449
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870386896
+      },
+      {
+        "executionId": "52d8b6c9-093a-4bac-8018-721bcd96445d",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794871812540
+      },
+      {
+        "executionId": "52d8b6c9-093a-4bac-8018-721bcd96445d",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794871921883
+      },
+      {
+        "executionId": "52d8b6c9-093a-4bac-8018-721bcd96445d",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794873437361
+      }
+    ],
+    "10.3 Write property test for workflow event chain": [
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760734676
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870374912
+      }
+    ],
+    "10.4 Write tests for workflow router (`backend/tests/test_workflow.py`)": [
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760734766
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870375040
+      }
+    ],
+    "11.2 Write tests for citizen router (`backend/tests/test_citizen.py`)": [
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760734941
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870375378
+      }
+    ],
+    "13.5 Write tests for ML routes (`backend/tests/test_ml.py`)": [
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760735851
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870376188
+      }
+    ],
+    "15.1 Write `backend/tests/test_auth.py`": [
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760736117
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870376378
+      }
+    ],
+    "15.2 Write property test for jurisdiction scoping": [
+      {
+        "executionId": "b2acb214-5259-4c66-9b9a-18668b3aede1",
+        "chatSessionId": "sess_84298f6a-01dd-430d-af54-1e2263905b70",
+        "timestamp": 1794760736251
+      },
+      {
+        "executionId": "b67a865d-888a-4428-9122-b948ccca2565",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794870376488
+      }
+    ],
+    "3. Security core — JWT auth, RBAC dependencies, audit chain": [
+      {
+        "executionId": "d10485ac-ec73-4050-adde-bf5a7c9e93a2",
+        "chatSessionId": "sess_04456185-6b61-444c-ad19-f567dd3e964c",
+        "timestamp": 1794763822082
+      }
+    ],
+    "7. Domain routers — Base Layer and Record of Rights": [
+      {
+        "executionId": "52d8b6c9-093a-4bac-8018-721bcd96445d",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794871918398
+      }
+    ],
+    "8. Domain routers — Registration, Encumbrance, Zoning, Building Permission, Tax": [
+      {
+        "executionId": "52d8b6c9-093a-4bac-8018-721bcd96445d",
+        "chatSessionId": "sess_6fb1ee94-83f8-4914-8537-3b1780854c2e",
+        "timestamp": 1794873437620
       }
     ]
   }

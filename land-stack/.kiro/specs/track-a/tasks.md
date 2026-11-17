@@ -19,7 +19,7 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
     - All routers import and return `Envelope[...]`
     - _Requirements: 1.2_
 
-  - [ ]* 1.3 Write property test for response envelope invariant
+  - [x] 1.3 Write property test for response envelope invariant
     - **Property 4: Response envelope invariant**
     - **Validates: Requirements 1.2**
     - Generate arbitrary route responses and assert all contain `success`, `data`, `errors` keys
@@ -69,14 +69,14 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
     - `downgrade()`: drop tables in reverse order
     - _Requirements: 2.4_
 
-  - [ ]* 2.5 Write property test for model round-trip serialization
+  - [x] 2.5 Write property test for model round-trip serialization
     - **Property 2: Hash chain integrity** (verify `prev_hash` linkage across consecutive audit rows)
     - **Validates: Requirements 6.2, 6.3**
     - Generate N sequential audit writes; assert chain integrity across all N rows
 
 ---
 
-- [ ] 3. Security core — JWT auth, RBAC dependencies, audit chain
+- [x] 3. Security core — JWT auth, RBAC dependencies, audit chain
   - [x] 3.1 Implement `backend/core/auth.py`
     - `create_access_token(data)` → HS256 JWT, 15-min expiry, payload includes `sub`, `role`, `jurisdiction`, `jti`
     - `create_refresh_token(data)` → HS256 JWT, 7-day expiry
@@ -97,23 +97,23 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
     - Fetches last row's `hash` (or `"0"*64` for first row); computes `new_hash = sha256(prev_hash + row_content)`; `db.add` within the caller's open transaction; `await db.flush()` to get the auto-id
     - _Requirements: 6.1, 6.2, 6.3_
 
-  - [ ] 3.4 Implement `backend/routers/auth.py` — POST /auth/login, POST /auth/refresh, POST /auth/logout
+  - [x] 3.4 Implement `backend/routers/auth.py` — POST /auth/login, POST /auth/refresh, POST /auth/logout
     - `POST /auth/login`: verify credentials via `verify_password`; return `{access_token, refresh_token, token_type, role, jurisdiction}` wrapped in `Envelope`
     - `POST /auth/refresh`: verify refresh token; issue new access token
     - `POST /auth/logout`: blacklist both tokens' JTIs in Redis
     - _Requirements: 4.1, 4.2, 4.3_
 
-  - [ ]* 3.5 Write property test for role enforcement
+  - [x] 3.5 Write property test for role enforcement
     - **Property 3: Role enforcement — forbidden access**
     - **Validates: Requirements 5.2, 5.3**
     - Generate random (endpoint, role) pairs where role ∉ allowed set; assert all return 403 with no DB side-effects
 
-  - [ ]* 3.6 Write property test for token blacklist
+  - [x] 3.6 Write property test for token blacklist
     - **Property 7: Token blacklist prevents reuse**
     - **Validates: Requirements 4.3, 4.4**
     - For any token that is logged out, assert all subsequent calls with that token return 401
 
-  - [ ]* 3.7 Write property test for audit chain
+  - [x] 3.7 Write property test for audit chain
     - **Property 1: Audit log entry exists after every write**
     - **Validates: Requirements 6.1, 6.2**
     - For any write action, assert a corresponding audit row exists with correct `resource_id` and `action`
@@ -151,7 +151,7 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
     - ML response schemas: `ChangeDetectionResponse`, `FraudScoreResponse`, `OcrExtractResponse`
     - _Requirements: 7.1_
 
-  - [ ]* 5.4 Write property test for CITIZEN field masking
+  - [x] 5.4 Write property test for CITIZEN field masking
     - **Property 5: Field masking — CITIZEN never receives hidden fields**
     - **Validates: Requirements 7.2, 7.4, 7.5**
     - For any resource instance, serialize with `Public` schema; assert `transaction_value`, `owner_id_ref`, `hash`, `prev_hash`, full polygon are all absent from the output
@@ -168,19 +168,19 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
 
 ---
 
-- [ ] 7. Domain routers — Base Layer and Record of Rights
-  - [ ] 7.1 Implement `backend/routers/parcel.py`
+- [x] 7. Domain routers — Base Layer and Record of Rights
+  - [x] 7.1 Implement `backend/routers/parcel.py`
     - `GET /parcels/{ulpin}`: fetch parcel; return `ParcelPublic` for CITIZEN, `ParcelInternal` for officers; require `Depends(require_role([all roles]))` + `Depends(check_jurisdiction)` for officer roles
     - `GET /parcels/search`: filter by `q`, `state_code`, `district`, `bbox` (PostGIS `ST_Intersects`); paginate with `limit`/`offset`; return list of `ParcelPublic`/`ParcelInternal`
     - `POST /parcels`: require `REV_OFF, STATE_ADMIN, NATL_ADMIN`; create parcel; write audit `CREATE_PARCEL`; return 201 `ParcelInternal`
     - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
-  - [ ] 7.2 Implement `backend/routers/ror.py`
+  - [x] 7.2 Implement `backend/routers/ror.py`
     - `GET /ror/{ulpin}`: return `RorPublic` for CITIZEN, `RorInternal` for officers
     - `PUT /ror/{ulpin}`: require `REV_OFF, STATE_ADMIN, NATL_ADMIN`; update fields; write audit `UPDATE_ROR`; publish `ror.mutation_status_changed` event when `mutation_status` flips; return `RorInternal`
     - _Requirements: 8.1, 8.4_
 
-  - [ ]* 7.3 Write tests for parcel and ror routers (`backend/tests/test_parcel.py`, `backend/tests/test_ror.py`)
+  - [x] 7.3 Write tests for parcel and ror routers (`backend/tests/test_parcel.py`, `backend/tests/test_ror.py`)
     - Test GET by valid ULPIN returns 200; GET with unknown ULPIN returns 404
     - Test CITIZEN gets `ParcelPublic` (no polygon); officer gets `ParcelInternal`
     - Test POST parcel by REV_OFF creates row and audit entry; POST by CITIZEN returns 403
@@ -189,34 +189,34 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
 
 ---
 
-- [ ] 8. Domain routers — Registration, Encumbrance, Zoning, Building Permission, Tax
-  - [ ] 8.1 Implement `backend/routers/registration.py`
+- [x] 8. Domain routers — Registration, Encumbrance, Zoning, Building Permission, Tax
+  - [x] 8.1 Implement `backend/routers/registration.py`
     - `POST /registration`: require `REG_OFF, STATE_ADMIN, NATL_ADMIN`; insert `Registration`; write audit `REGISTER_DEED`; publish `registration.completed` to Redis; return 201 `RegistrationInternal`
     - `GET /registration`: filterable list; return `RegistrationPublic` for CITIZEN/REV_OFF (omit `transaction_value`)
     - `GET /registration/{id}`: single record with masking
     - _Requirements: 8.1, 8.4_
 
-  - [ ] 8.2 Implement `backend/routers/encumbrance.py`
+  - [x] 8.2 Implement `backend/routers/encumbrance.py`
     - `POST /encumbrance`: require `REG_OFF, STATE_ADMIN, NATL_ADMIN`; write audit `CREATE_ENCUMBRANCE`; return 201 `EncumbranceInternal`
     - `GET /encumbrance/{ulpin}`: public, no masking; return list
     - _Requirements: 8.1, 8.4_
 
-  - [ ] 8.3 Implement `backend/routers/zoning.py`
+  - [x] 8.3 Implement `backend/routers/zoning.py`
     - `PUT /zoning/{ulpin}`: require `PLAN_OFF, STATE_ADMIN, NATL_ADMIN`; write audit `UPDATE_ZONING`; return `ZoningInternal`
     - `GET /zoning/{ulpin}`: public; return `ZoningPublic`
     - _Requirements: 8.1, 8.4_
 
-  - [ ] 8.4 Implement `backend/routers/building_permission.py`
+  - [x] 8.4 Implement `backend/routers/building_permission.py`
     - `POST /building-permission`: require `PLAN_OFF, STATE_ADMIN, NATL_ADMIN`; write audit `CREATE_BUILDING_PERMISSION`; return 201 `BuildingPermissionInternal`
     - `GET /building-permission/{ulpin}`: public; return list
     - _Requirements: 8.1, 8.4_
 
-  - [ ] 8.5 Implement `backend/routers/tax.py`
+  - [x] 8.5 Implement `backend/routers/tax.py`
     - `GET /tax/{ulpin}`: return `TaxPublic` for CITIZEN (omit `annual_tax`)
     - `PUT /tax/{ulpin}`: require `TAX_OFF, STATE_ADMIN, NATL_ADMIN`; write audit `REASSESS_TAX`; return `TaxInternal`
     - _Requirements: 8.1, 8.4_
 
-  - [ ]* 8.6 Write tests for registration, encumbrance, zoning, building_permission, tax routers
+  - [x] 8.6 Write tests for registration, encumbrance, zoning, building_permission, tax routers
     - `backend/tests/test_registration.py`: POST by REG_OFF → 201 + audit row + Redis publish; GET by CITIZEN omits `transaction_value`; jurisdiction mismatch → 403
     - `backend/tests/test_encumbrance.py`: POST then GET; `institution` present in public response
     - `backend/tests/test_zoning.py`: PUT then GET; `violation_flag` reflects `far_existing > far_permitted`
@@ -225,7 +225,7 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
 
 ---
 
-- [ ] 9. Checkpoint — domain routers green
+- [x] 9. Checkpoint — domain routers green
   - Ensure all tests pass, ask the user if questions arise.
 
 ---
@@ -245,12 +245,12 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
     - `GET /workflow/events/stream`: SSE endpoint reading from Redis `SUBSCRIBE`; each message emitted as `data: {JSON}\n\n`
     - _Requirements: 8.1, 9.1, 9.2_
 
-  - [ ]* 10.3 Write property test for workflow event chain
+  - [ ] 10.3 Write property test for workflow event chain
     - **Property 8: Workflow event chain**
     - **Validates: Requirements 9.1**
     - For any `registration.completed` event, assert exactly one `workflow_tasks` row of type `MUTATION` is created with matching `ulpin`
 
-  - [ ]* 10.4 Write tests for workflow router (`backend/tests/test_workflow.py`)
+  - [ ] 10.4 Write tests for workflow router (`backend/tests/test_workflow.py`)
     - Test approve by correct role → audit + next event; reject by correct role → audit
     - Test approve by wrong role type → 403 (e.g. TAX_OFF cannot approve a MUTATION task)
     - Test SSE stream returns valid event-stream content-type
@@ -259,13 +259,13 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
 ---
 
 - [ ] 11. Citizen Services router
-  - [ ] 11.1 Implement `backend/routers/citizen.py`
+  - [x] 11.1 Implement `backend/routers/citizen.py`
     - `POST /citizen/service-request`: require `CITIZEN`; insert `CitizenServiceRequest`; write audit `CITIZEN_SERVICE_REQUEST`; return 201 `{request_id, status}`
     - `GET /citizen/requests`: require `CITIZEN`; return requests scoped to `current_user.username`
     - `GET /citizen/parcels`: require `CITIZEN`; query `ror.owner_name` ILIKE `%citizen_name%` to find owned parcels; return list of `ParcelPublic`
     - _Requirements: 8.1, 8.4_
 
-  - [ ]* 11.2 Write tests for citizen router (`backend/tests/test_citizen.py`)
+  - [ ] 11.2 Write tests for citizen router (`backend/tests/test_citizen.py`)
     - Test service request submission returns 201 with `request_id`
     - Test GET /citizen/requests scoped to current user (cannot see other users' requests)
     - Test officer calling `/citizen/service-request` returns 403
@@ -274,7 +274,7 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
 ---
 
 - [ ] 12. Admin and Analytics routers
-  - [ ] 12.1 Implement `backend/routers/admin.py`
+  - [x] 12.1 Implement `backend/routers/admin.py`
     - `GET /admin/state-adapter/{state_code}`: require `STATE_ADMIN` (own state) or `NATL_ADMIN`; return config list
     - `PUT /admin/state-adapter/{state_code}`: require `NATL_ADMIN`; update config; write audit `UPDATE_STATE_ADAPTER`
     - `GET /admin/users`: require `STATE_ADMIN` (own jurisdiction) or `NATL_ADMIN`; return `UserInternal` list (no `hashed_password`)
@@ -311,7 +311,7 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
     - `POST /ml/ocr-extract`: require `REV_OFF, STATE_ADMIN, NATL_ADMIN`; call `ocr_extraction.py`; write audit `ML_OCR_EXTRACT`; return `OcrExtractResponse`
     - _Requirements: 10.1, 10.2, 10.3, 10.4_
 
-  - [ ]* 13.5 Write tests for ML routes (`backend/tests/test_ml.py`)
+  - [ ] 13.5 Write tests for ML routes (`backend/tests/test_ml.py`)
     - Mock OpenCV/pytesseract/sklearn calls; test each ML route returns correct schema shape
     - Test audit rows are written for each ML action
     - Test wrong role returns 403 on each ML route (CITIZEN, wrong officer type)
@@ -325,14 +325,14 @@ Implements the complete Python/FastAPI backend for Land Stack (SIH PS #26014). A
 ---
 
 - [ ] 15. Auth test suite and jurisdiction property tests
-  - [ ]* 15.1 Write `backend/tests/test_auth.py`
+  - [ ] 15.1 Write `backend/tests/test_auth.py`
     - Test valid login returns 200 with both tokens
     - Test refresh with valid refresh token returns new access token
     - Test logout blacklists token: subsequent request with same token returns 401
     - Test expired token returns 401
     - _Requirements: 12.1, 12.2_
 
-  - [ ]* 15.2 Write property test for jurisdiction scoping
+  - [ ] 15.2 Write property test for jurisdiction scoping
     - **Property 6: Jurisdiction scoping**
     - **Validates: Requirements 5.4, 5.5**
     - Generate officer JWTs with random `jurisdiction` values; for any parcel whose `state_code != jurisdiction`, assert 403 on write endpoints
