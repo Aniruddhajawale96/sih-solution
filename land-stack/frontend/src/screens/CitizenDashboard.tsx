@@ -1,124 +1,95 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TopNav } from '@/components/TopNav'
 import { Footer } from '@/components/Footer'
-import { apiClient } from '@/lib/apiClient'
-import { useAuthStore, Role } from '@/store/authStore'
+import { useAuthStore } from '@/store/authStore'
 
-function roleToRoute(role: Role): string {
-  switch (role) {
-    case 'CITIZEN':     return '/citizen/services'
-    case 'REV_OFF':
-    case 'REG_OFF':
-    case 'PLAN_OFF':
-    case 'TAX_OFF':     return '/officer/dashboard'
-    case 'STATE_ADMIN': return '/admin/state'
-    case 'NATL_ADMIN':  return '/admin/national'
-    default:            return '/'
-  }
-}
-
-interface LoginResponse {
-  access_token: string
-  refresh_token?: string
-  user: {
-    username: string
-    role: Role
-    jurisdiction?: string
-  }
-}
-
+/**
+ * Citizen landing page — shown after a successful citizen login.
+ * Previously this file was an erroneous copy of OfficerLogin that rendered
+ * a second login form here instead of post-login content (bug fix).
+ */
 export default function CitizenDashboard() {
-  const [email, setEmail]       = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading]   = useState(false)
-  const [error, setError]       = useState<string | null>(null)
+  const navigate = useNavigate()
+  const { username, clearAuth } = useAuthStore()
 
-  const setAuth    = useAuthStore(s => s.setAuth)
-  const navigate   = useNavigate()
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setError(null)
-    setLoading(true)
-    try {
-      const { data } = await apiClient.post<LoginResponse>('/auth/login', { email, password })
-      setAuth({
-        username:     data.user.username,
-        role:         data.user.role,
-        jurisdiction: data.user.jurisdiction ?? null,
-        accessToken:  data.access_token,
-        refreshToken: data.refresh_token ?? null,
-      })
-      navigate(roleToRoute(data.user.role))
-    } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { detail?: string } } })
-          ?.response?.data?.detail ?? 'Login failed. Please check your credentials.'
-      setError(msg)
-    } finally {
-      setLoading(false)
-    }
+  function handleLogout() {
+    clearAuth()
+    navigate('/')
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-slate-50">
       <TopNav />
-      <main className="flex-1 flex items-center justify-center bg-slate-50">
-        <div className="bg-white rounded-xl shadow-lg p-10 w-full max-w-sm">
-          <p className="text-5xl mb-3 text-center">👤</p>
-          <h2 className="text-2xl font-bold text-slate-800 mb-1 text-center">Welcome Back</h2>
-          <p className="text-slate-500 text-sm text-center mb-6">Sign in to Land Stack</p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1">
-              <label htmlFor="email" className="text-sm font-medium text-slate-700">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="you@example.com"
-              />
-            </div>
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+        <div className="bg-white rounded-2xl shadow-lg p-10 w-full max-w-lg text-center">
+          <p className="text-5xl mb-4">👤</p>
+          <h1 className="text-2xl font-bold text-slate-800 mb-1">
+            Welcome{username ? `, ${username}` : ''}
+          </h1>
+          <p className="text-slate-500 text-sm mb-8">
+            What would you like to do today?
+          </p>
 
-            <div className="flex flex-col gap-1">
-              <label htmlFor="password" className="text-sm font-medium text-slate-700">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="••••••••"
-              />
-            </div>
-
-            {error && (
-              <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                {error}
-              </p>
-            )}
-
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+            {/* Service Request Portal */}
             <button
-              type="submit"
-              disabled={loading}
-              className="bg-[#1e40af] text-white rounded-lg py-2 text-sm font-semibold hover:bg-blue-800 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              onClick={() => navigate('/citizen/services')}
+              className="flex flex-col gap-2 p-5 rounded-xl border border-slate-200 bg-slate-50 hover:border-blue-300 hover:bg-blue-50 transition-colors text-left"
             >
-              {loading ? 'Signing in…' : 'Sign in'}
+              <span className="text-2xl">📋</span>
+              <span className="font-semibold text-slate-800 text-sm">Submit a Request</span>
+              <span className="text-xs text-slate-500 leading-snug">
+                Apply for mutations, encumbrance certificates, land-use changes, and more.
+              </span>
             </button>
-          </form>
+
+            {/* Request Tracking */}
+            <button
+              onClick={() => navigate('/citizen/requests')}
+              className="flex flex-col gap-2 p-5 rounded-xl border border-slate-200 bg-slate-50 hover:border-blue-300 hover:bg-blue-50 transition-colors text-left"
+            >
+              <span className="text-2xl">🔍</span>
+              <span className="font-semibold text-slate-800 text-sm">Track Requests</span>
+              <span className="text-xs text-slate-500 leading-snug">
+                View the status of all service requests you have submitted.
+              </span>
+            </button>
+
+            {/* Map Explorer */}
+            <button
+              onClick={() => navigate('/map')}
+              className="flex flex-col gap-2 p-5 rounded-xl border border-slate-200 bg-slate-50 hover:border-emerald-300 hover:bg-emerald-50 transition-colors text-left"
+            >
+              <span className="text-2xl">🗺️</span>
+              <span className="font-semibold text-slate-800 text-sm">Map Explorer</span>
+              <span className="text-xs text-slate-500 leading-snug">
+                Browse parcel boundaries and search by ULPIN or owner name.
+              </span>
+            </button>
+
+            {/* Verify Ownership */}
+            <button
+              onClick={() => navigate('/parcel/CH-UT-000001/verify')}
+              className="flex flex-col gap-2 p-5 rounded-xl border border-slate-200 bg-slate-50 hover:border-emerald-300 hover:bg-emerald-50 transition-colors text-left"
+            >
+              <span className="text-2xl">✅</span>
+              <span className="font-semibold text-slate-800 text-sm">Verify Ownership</span>
+              <span className="text-xs text-slate-500 leading-snug">
+                Look up the Record of Rights and download an ownership certificate.
+              </span>
+            </button>
+          </div>
+
+          <button
+            onClick={handleLogout}
+            className="mt-8 text-sm text-slate-400 hover:text-red-500 transition-colors underline"
+          >
+            Sign out
+          </button>
         </div>
       </main>
+
       <Footer />
     </div>
   )
