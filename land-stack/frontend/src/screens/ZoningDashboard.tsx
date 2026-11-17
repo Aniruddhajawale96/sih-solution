@@ -1,191 +1,167 @@
-import 'maplibre-gl/dist/maplibre-gl.css'
-import { useEffect, useRef, useState } from 'react'
-import maplibregl from 'maplibre-gl'
-import { useQuery } from '@tanstack/react-query'
+import { useRef, useState } from 'react'
 import { TopNav } from '@/components/TopNav'
 import { Footer } from '@/components/Footer'
 import { apiClient } from '@/lib/apiClient'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface Violation {
+interface ZoningPublic {
   ulpin: string
-  lat: number
-  lng: number
-  violation_type: string
-  severity: 'high' | 'medium' | 'low'
+  master_plan_zone: string
+  permissible_use: string
+  far_permitted: number
+  far_existing: number
+  violation_flag: boolean
 }
 
-interface ChangeDetectionResult {
-  changes_detected: number
-  flagged_ulpins: string[]
+interface ChangeDetectionResponse {
+  ulpin: string
+  changed_area_sqm: number
+  far_existing_est: number
+  violation_flag: boolean
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── ZoningLookupPanel ────────────────────────────────────────────────────────
 
-const SEVERITY_COLOR: Record<Violation['severity'], string> = {
-  high: '#ef4444',
-  medium: '#f97316',
-  low: '#eab308',
-}
+function ZoningLookupPanel() {
+  const [ulpin, setUlpin] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [result, setResult] = useState<ZoningPublic | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
-function severityLabel(s: Violation['severity']): string {
-  return s.charAt(0).toUpperCase() + s.slice(1)
-}
-
-// ─── ViolationMap ─────────────────────────────────────────────────────────────
-
-interface ViolationMapProps {
-  violations: Violation[]
-}
-
-function ViolationMap({ violations }: ViolationMapProps) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const mapRef = useRef<maplibregl.Map | null>(null)
-  const markersRef = useRef<maplibregl.Marker[]>([])
-  // Track any pending 'load' callback so we can cancel it before re-registering.
-  // Without this, every render that fires before the map loads queues another
-  // addMarkers call via map.once, resulting in duplicate markers (bug fix).
-  const pendingAddMarkersRef = useRef<(() => void) | null>(null)
-
-  // Initialise map once
-  useEffect(() => {
-    if (!containerRef.current || mapRef.current) return
-
-    const map = new maplibregl.Map({
-      container: containerRef.current,
-      style: 'https://demotiles.maplibre.org/style.json',
-      center: [78.9629, 20.5937],
-      zoom: 5,
-    })
-
-    map.addControl(new maplibregl.NavigationControl(), 'top-right')
-    map.addControl(new maplibregl.ScaleControl(), 'bottom-left')
-
-    mapRef.current = map
-
-    return () => {
-      // Cancel any pending load listener before destroying the map
-      if (pendingAddMarkersRef.current) {
-        map.off('load', pendingAddMarkersRef.current)
-        pendingAddMarkersRef.current = null
-      }
-      markersRef.current.forEach((m) => m.remove())
-      markersRef.current = []
-      map.remove()
-      mapRef.current = null
+  async function handleLookup() {
+    const trimmed = ulpin.trim()
+    if (!trimmed) return
+    setLoading(true)
+    setResult(null)
+    setError(null)
+    try {
+      const { data } = await apiClient.get<ZoningPublic>(`/zoning/${encodeURIComponent(trimmed)}`)
+      setResult(data)
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { detail?: string } }; message?: string })
+          ?.response?.data?.detail ??
+        (err as { message?: string })?.message ??
+        'Lookup failed. Please try again.'
+      setError(msg)
+    } finally {
+      setLoading(false)
     }
-  }, [])
+  }
 
-  // Add / refresh markers whenever violations change
-  useEffect(() => {
-    const map = mapRef.current
-    if (!map) return
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') handleLookup()
+  }
 
-    // Cancel any previously queued load listener before proceeding.
-    // If we don't do this, multiple renders before map.load fires will stack up
-    // separate once('load', addMarkers) calls, each adding the full marker set.
-    if (pendingAddMarkersRef.current) {
-      map.off('load', pendingAddMarkersRef.current)
-      pendingAddMarkersRef.current = null
-    }
+  return (
+    <div className="flex flex-col gap-5 h-full">
+      <div>
+        <h2 className="text-lg font-bold text-slate-800">Zoning Record Lookup</h2>
+        <p className="text-sm text-slate-500 mt-0.5">
+          Enter a ULPIN to fetch its master-plan zone and FAR data.
+        </p>
+      </div>
 
-    // Remove existing markers
-    markersRef.current.forEach((m) => m.remove())
-    markersRef.current = []
+      {/* ULPIN input */}
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={ulpin}
+          onChange={e => { setUlpin(e.target.value); setError(null); setResult(null) }}
+          onKeyDown={handleKeyDown}
+          placeholder="e.g. CH-01-001-0001"
+          className="flex-1 text-sm rounded-lg border border-slate-300 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        />
+        <button
+          onClick={handleLookup}
+          disabled={!ulpin.trim() || loading}
+          className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
+        >
+          {loading ? 'Looking up…' : 'Look up'}
+        </button>
+      </div>
 
-    function addMarkers() {
-      pendingAddMarkersRef.current = null
-      violations.forEach((v) => {
-        // Coloured dot element
-        const el = document.createElement('div')
-        el.style.cssText = `
-          width: 14px;
-          height: 14px;
-          border-radius: 50%;
-          background-color: ${SEVERITY_COLOR[v.severity]};
-          border: 2px solid white;
-          box-shadow: 0 1px 4px rgba(0,0,0,0.4);
-          cursor: pointer;
-        `
+      {/* Error */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
+          {error}
+        </div>
+      )}
 
-        // Build popup with DOM nodes rather than setHTML to prevent XSS.
-        // The original code used setHTML with raw string interpolation of
-        // server-provided values (ulpin, violation_type) — a stored XSS vector.
-        const popupEl = document.createElement('div')
-        popupEl.style.cssText = 'font-family:sans-serif;font-size:13px;line-height:1.5;padding:4px 2px'
+      {/* Result */}
+      {result && (
+        <div className="bg-slate-50 border border-slate-200 rounded-xl px-5 py-4 space-y-3">
+          {/* Violation badge */}
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+              {result.ulpin}
+            </span>
+            <span
+              className={`inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full ${
+                result.violation_flag
+                  ? 'bg-red-100 text-red-700'
+                  : 'bg-green-100 text-green-700'
+              }`}
+            >
+              {result.violation_flag ? '⚠ Violation' : '✓ Compliant'}
+            </span>
+          </div>
 
-        const title = document.createElement('div')
-        title.style.cssText = 'font-weight:700;color:#1e293b;margin-bottom:4px'
-        title.textContent = v.ulpin
-        popupEl.appendChild(title)
-
-        const typeLine = document.createElement('div')
-        typeLine.style.color = '#475569'
-        const typeLabel = document.createElement('span')
-        typeLabel.style.fontWeight = '600'
-        typeLabel.textContent = 'Type: '
-        typeLine.appendChild(typeLabel)
-        typeLine.appendChild(document.createTextNode(v.violation_type))
-        popupEl.appendChild(typeLine)
-
-        const sevLine = document.createElement('div')
-        sevLine.style.color = '#475569'
-        const sevLabel = document.createElement('span')
-        sevLabel.style.fontWeight = '600'
-        sevLabel.textContent = 'Severity: '
-        sevLine.appendChild(sevLabel)
-        const sevValue = document.createElement('span')
-        sevValue.style.cssText = `color:${SEVERITY_COLOR[v.severity]};font-weight:600`
-        sevValue.textContent = severityLabel(v.severity)
-        sevLine.appendChild(sevValue)
-        popupEl.appendChild(sevLine)
-
-        const popup = new maplibregl.Popup({ offset: 12, closeButton: false })
-          .setDOMContent(popupEl)
-
-        const marker = new maplibregl.Marker({ element: el })
-          .setLngLat([v.lng, v.lat])
-          .setPopup(popup)
-          .addTo(map!)
-
-        el.addEventListener('click', () => marker.togglePopup())
-        markersRef.current.push(marker)
-      })
-    }
-
-    if (map.loaded()) {
-      addMarkers()
-    } else {
-      pendingAddMarkersRef.current = addMarkers
-      map.once('load', addMarkers)
-    }
-  }, [violations])
-
-  return <div ref={containerRef} className="w-full h-full rounded-xl overflow-hidden" />
+          <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
+            <div>
+              <dt className="text-xs text-slate-500">Master Plan Zone</dt>
+              <dd className="text-sm font-medium text-slate-800 mt-0.5">{result.master_plan_zone}</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-slate-500">Permissible Use</dt>
+              <dd className="text-sm font-medium text-slate-800 mt-0.5">{result.permissible_use}</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-slate-500">FAR Permitted</dt>
+              <dd className="text-sm font-medium text-slate-800 mt-0.5">{result.far_permitted}</dd>
+            </div>
+            <div>
+              <dt className="text-xs text-slate-500">FAR Existing</dt>
+              <dd className={`text-sm font-medium mt-0.5 ${result.violation_flag ? 'text-red-600' : 'text-slate-800'}`}>
+                {result.far_existing}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      )}
+    </div>
+  )
 }
 
 // ─── ChangeDetectionPanel ─────────────────────────────────────────────────────
 
 function ChangeDetectionPanel() {
-  const [file, setFile] = useState<File | null>(null)
+  const [beforeFile, setBeforeFile] = useState<File | null>(null)
+  const [afterFile, setAfterFile] = useState<File | null>(null)
+  const [ulpin, setUlpin] = useState('')
+  const [farPermitted, setFarPermitted] = useState('')
   const [uploading, setUploading] = useState(false)
-  const [result, setResult] = useState<ChangeDetectionResult | null>(null)
+  const [result, setResult] = useState<ChangeDetectionResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const beforeRef = useRef<HTMLInputElement>(null)
+  const afterRef = useRef<HTMLInputElement>(null)
 
   async function handleUpload() {
-    if (!file) return
+    if (!beforeFile || !afterFile || !ulpin.trim() || !farPermitted) return
     setUploading(true)
     setResult(null)
     setError(null)
 
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append('before_image', beforeFile)
+    formData.append('after_image', afterFile)
+    formData.append('ulpin', ulpin.trim())
+    formData.append('far_permitted', farPermitted)
 
     try {
-      const { data } = await apiClient.post<ChangeDetectionResult>(
-        '/zoning/change-detection',
+      const { data } = await apiClient.post<ChangeDetectionResponse>(
+        '/ml/change-detection',
         formData,
         { headers: { 'Content-Type': 'multipart/form-data' } }
       )
@@ -202,19 +178,18 @@ function ChangeDetectionPanel() {
     }
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const selected = e.target.files?.[0] ?? null
-    setFile(selected)
+  function handleReset() {
+    setBeforeFile(null)
+    setAfterFile(null)
+    setUlpin('')
+    setFarPermitted('')
     setResult(null)
     setError(null)
+    if (beforeRef.current) beforeRef.current.value = ''
+    if (afterRef.current) afterRef.current.value = ''
   }
 
-  function handleReset() {
-    setFile(null)
-    setResult(null)
-    setError(null)
-    if (inputRef.current) inputRef.current.value = ''
-  }
+  const canSubmit = !!beforeFile && !!afterFile && !!ulpin.trim() && !!farPermitted
 
   return (
     <div className="flex flex-col gap-5 h-full">
@@ -222,53 +197,88 @@ function ChangeDetectionPanel() {
       <div>
         <h2 className="text-lg font-bold text-slate-800">Change Detection</h2>
         <p className="text-sm text-slate-500 mt-0.5">
-          Upload a GeoJSON or ZIP file to detect land-use changes.
+          Upload before/after satellite images to detect FAR changes and flag violations.
         </p>
       </div>
 
-      {/* Upload box */}
-      <div
-        onClick={() => inputRef.current?.click()}
-        className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-slate-300 rounded-xl px-6 py-8 cursor-pointer hover:border-emerald-400 hover:bg-emerald-50 transition-colors"
-      >
-        <svg
-          className="w-10 h-10 text-slate-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={1.5}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-          />
-        </svg>
-        {file ? (
-          <div className="text-center">
-            <p className="text-sm font-medium text-emerald-700 truncate max-w-[180px]">{file.name}</p>
-            <p className="text-xs text-slate-500 mt-0.5">{(file.size / 1024).toFixed(1)} KB</p>
-          </div>
-        ) : (
-          <div className="text-center">
-            <p className="text-sm font-medium text-slate-600">Click to select file</p>
-            <p className="text-xs text-slate-400 mt-0.5">.geojson or .zip</p>
-          </div>
-        )}
+      {/* ULPIN input */}
+      <div>
+        <label className="block text-xs font-semibold text-slate-600 mb-1">ULPIN</label>
         <input
-          ref={inputRef}
-          type="file"
-          accept=".geojson,.zip"
-          onChange={handleFileChange}
-          className="hidden"
+          type="text"
+          value={ulpin}
+          onChange={e => setUlpin(e.target.value)}
+          placeholder="e.g. CH-01-001-0001"
+          className="w-full text-sm rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
         />
+      </div>
+
+      {/* FAR Permitted input */}
+      <div>
+        <label className="block text-xs font-semibold text-slate-600 mb-1">FAR Permitted</label>
+        <input
+          type="number"
+          step="0.01"
+          min="0"
+          value={farPermitted}
+          onChange={e => setFarPermitted(e.target.value)}
+          placeholder="e.g. 1.5"
+          className="w-full text-sm rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        />
+      </div>
+
+      {/* File pickers */}
+      <div className="grid grid-cols-2 gap-3">
+        {/* Before image */}
+        <div>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">Before Image</label>
+          <div
+            onClick={() => beforeRef.current?.click()}
+            className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-slate-300 rounded-xl px-3 py-4 cursor-pointer hover:border-emerald-400 hover:bg-emerald-50 transition-colors"
+          >
+            {beforeFile ? (
+              <span className="text-xs font-medium text-emerald-700 truncate max-w-full text-center">{beforeFile.name}</span>
+            ) : (
+              <span className="text-xs text-slate-500 text-center">Click to select<br />before image</span>
+            )}
+            <input
+              ref={beforeRef}
+              type="file"
+              accept="image/*"
+              onChange={e => setBeforeFile(e.target.files?.[0] ?? null)}
+              className="hidden"
+            />
+          </div>
+        </div>
+
+        {/* After image */}
+        <div>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">After Image</label>
+          <div
+            onClick={() => afterRef.current?.click()}
+            className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-slate-300 rounded-xl px-3 py-4 cursor-pointer hover:border-emerald-400 hover:bg-emerald-50 transition-colors"
+          >
+            {afterFile ? (
+              <span className="text-xs font-medium text-emerald-700 truncate max-w-full text-center">{afterFile.name}</span>
+            ) : (
+              <span className="text-xs text-slate-500 text-center">Click to select<br />after image</span>
+            )}
+            <input
+              ref={afterRef}
+              type="file"
+              accept="image/*"
+              onChange={e => setAfterFile(e.target.files?.[0] ?? null)}
+              className="hidden"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Action buttons */}
       <div className="flex gap-2">
         <button
           onClick={handleUpload}
-          disabled={!file || uploading}
+          disabled={!canSubmit || uploading}
           className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
         >
           {uploading ? (
@@ -283,7 +293,7 @@ function ChangeDetectionPanel() {
             'Run Detection'
           )}
         </button>
-        {(file || result) && (
+        {(beforeFile || afterFile || result) && (
           <button
             onClick={handleReset}
             className="px-4 py-2.5 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
@@ -305,43 +315,27 @@ function ChangeDetectionPanel() {
 
       {/* Result */}
       {result && (
-        <div className="flex flex-col gap-4 bg-slate-50 border border-slate-200 rounded-xl px-5 py-4">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-3 bg-slate-50 border border-slate-200 rounded-xl px-5 py-4">
+          <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Changes Detected</span>
-              <span className="text-3xl font-bold text-emerald-700 mt-0.5">{result.changes_detected}</span>
-            </div>
-            <div className="ml-auto">
-              <span
-                className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
-                  result.changes_detected > 0
-                    ? 'bg-amber-100 text-amber-700'
-                    : 'bg-green-100 text-green-700'
-                }`}
-              >
-                {result.changes_detected > 0 ? '⚠ Review needed' : '✓ No changes'}
+              <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">Changed Area</span>
+              <span className="text-2xl font-bold text-emerald-700 mt-0.5">
+                {result.changed_area_sqm.toFixed(1)} m²
               </span>
             </div>
+            <span
+              className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
+                result.violation_flag
+                  ? 'bg-red-100 text-red-700'
+                  : 'bg-green-100 text-green-700'
+              }`}
+            >
+              {result.violation_flag ? '⚠ Violation flagged' : '✓ No violation'}
+            </span>
           </div>
-
-          {result.flagged_ulpins.length > 0 && (
-            <div>
-              <p className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">
-                Flagged ULPINs ({result.flagged_ulpins.length})
-              </p>
-              <ul className="space-y-1 max-h-48 overflow-y-auto pr-1">
-                {result.flagged_ulpins.map((ulpin) => (
-                  <li
-                    key={ulpin}
-                    className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-mono text-slate-700"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
-                    {ulpin}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <div className="text-xs text-slate-600">
+            Estimated FAR existing: <span className="font-semibold">{result.far_existing_est}</span>
+          </div>
         </div>
       )}
     </div>
@@ -351,21 +345,6 @@ function ChangeDetectionPanel() {
 // ─── ZoningDashboard ──────────────────────────────────────────────────────────
 
 export default function ZoningDashboard() {
-  const {
-    data: violations,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<Violation[]>({
-    queryKey: ['zoning', 'violations'],
-    queryFn: async () => {
-      const { data } = await apiClient.get<Violation[]>('/zoning/violations')
-      return data
-    },
-  })
-
-  const violationList = violations ?? []
-
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <TopNav />
@@ -373,64 +352,23 @@ export default function ZoningDashboard() {
       <main className="flex-1 px-4 py-8 max-w-7xl mx-auto w-full">
         {/* Page heading */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-slate-800">Zoning &amp; Violation Dashboard</h1>
+          <h1 className="text-2xl font-bold text-slate-800">Zoning &amp; Change Detection</h1>
           <p className="text-slate-500 text-sm mt-1">
-            FAR violations map and satellite change-detection analysis
+            Look up zoning records by ULPIN and run satellite change-detection analysis
           </p>
         </div>
 
         {/* Two-column layout */}
         <div className="flex flex-col md:flex-row gap-6">
-          {/* ── Left: ViolationMap (60%) ── */}
-          <div className="flex flex-col gap-3 w-full md:w-[60%]">
-            {/* Violations count badge */}
-            <div className="flex items-center gap-3">
-              <h2 className="text-base font-semibold text-slate-700">Violation Map</h2>
-              {!isLoading && !isError && (
-                <span className="inline-flex items-center gap-1.5 bg-red-100 text-red-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                  <span
-                    className="w-1.5 h-1.5 rounded-full bg-red-500"
-                    aria-hidden="true"
-                  />
-                  {violationList.length} violation{violationList.length !== 1 ? 's' : ''}
-                </span>
-              )}
-              {isLoading && (
-                <svg className="w-4 h-4 text-slate-400 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                </svg>
-              )}
-            </div>
-
-            {/* Severity legend */}
-            <div className="flex items-center gap-4 text-xs text-slate-500">
-              {(['high', 'medium', 'low'] as const).map((s) => (
-                <span key={s} className="flex items-center gap-1.5">
-                  <span
-                    className="w-2.5 h-2.5 rounded-full border border-white shadow"
-                    style={{ backgroundColor: SEVERITY_COLOR[s] }}
-                  />
-                  {severityLabel(s)}
-                </span>
-              ))}
-            </div>
-
-            {isError && (
-              <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
-                <strong>Failed to load violations.</strong>{' '}
-                {(error as { message?: string })?.message ?? 'Please try again.'}
-              </div>
-            )}
-
-            {/* Map container — fixed height so MapLibre renders correctly */}
-            <div className="rounded-xl overflow-hidden shadow-md border border-slate-200" style={{ height: '480px' }}>
-              <ViolationMap violations={violationList} />
+          {/* ── Left: Zoning Lookup (50%) ── */}
+          <div className="w-full md:w-1/2">
+            <div className="bg-white rounded-xl shadow-md border border-slate-200 px-6 py-6 h-full">
+              <ZoningLookupPanel />
             </div>
           </div>
 
-          {/* ── Right: ChangeDetectionPanel (40%) ── */}
-          <div className="w-full md:w-[40%]">
+          {/* ── Right: ChangeDetectionPanel (50%) ── */}
+          <div className="w-full md:w-1/2">
             <div className="bg-white rounded-xl shadow-md border border-slate-200 px-6 py-6 h-full">
               <ChangeDetectionPanel />
             </div>

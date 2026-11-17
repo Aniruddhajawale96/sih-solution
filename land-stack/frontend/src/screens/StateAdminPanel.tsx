@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   BarChart,
   Bar,
@@ -12,34 +12,31 @@ import {
 import { TopNav } from '@/components/TopNav'
 import { Footer } from '@/components/Footer'
 import { apiClient } from '@/lib/apiClient'
+import { useAuthStore } from '@/store/authStore'
 
 // ── TypeScript interfaces ──────────────────────────────────────────────────────
 
 interface StateAnalytics {
-  total_parcels: number
-  active_requests: number
-  completed_this_month: number
-  violations_open: number
-  officers_active: number
-  district_breakdown?: { district: string; count: number }[]
+  parcels_total: number
+  violations: number
+  pending_mutations: number
+  arrears_total: number
 }
 
 interface StateUser {
-  user_id: string
   username: string
-  email: string
   role: string
+  jurisdiction: string | null
   is_active: boolean
-  created_at: string
 }
 
-interface Adapter {
-  adapter_id: string
-  name: string
-  state: string
-  status: 'online' | 'offline' | 'error'
-  last_sync?: string
-  records_synced?: number
+interface StateAdapterConfig {
+  id: number
+  state_code: string
+  source_field_name: string
+  canonical_field_name: string
+  unit_conversion_factor: number
+  language_code: string
 }
 
 // ── Tab definitions ────────────────────────────────────────────────────────────
@@ -98,31 +95,30 @@ const PLACEHOLDER_DISTRICTS = [
 // ── Tab 1 — Analytics ─────────────────────────────────────────────────────────
 
 function AnalyticsPanel() {
+  const jurisdiction = useAuthStore(s => s.jurisdiction)
+
   const { data, isLoading, isError, error } = useQuery<StateAnalytics>({
-    queryKey: ['state', 'analytics'],
-    queryFn: () => apiClient.get('/admin/state/analytics').then(r => r.data),
+    queryKey: ['state', 'analytics', jurisdiction],
+    queryFn: () =>
+      apiClient.get(`/analytics/state/${encodeURIComponent(jurisdiction ?? '')}`).then(r => r.data),
+    enabled: !!jurisdiction,
   })
 
+  if (!jurisdiction) return <ErrorState message="No jurisdiction set for this account." />
   if (isLoading) return <LoadingState />
   if (isError) return <ErrorState message={(error as Error)?.message ?? 'Failed to load analytics.'} />
 
   const kpis: { label: string; value: number }[] = [
-    { label: 'Total Parcels',          value: data?.total_parcels        ?? 0 },
-    { label: 'Active Requests',        value: data?.active_requests      ?? 0 },
-    { label: 'Completed This Month',   value: data?.completed_this_month ?? 0 },
-    { label: 'Open Violations',        value: data?.violations_open      ?? 0 },
-    { label: 'Active Officers',        value: data?.officers_active      ?? 0 },
+    { label: 'Total Parcels',      value: data?.parcels_total      ?? 0 },
+    { label: 'Zoning Violations',  value: data?.violations         ?? 0 },
+    { label: 'Pending Mutations',  value: data?.pending_mutations  ?? 0 },
+    { label: 'Arrears Total (₹)',  value: data?.arrears_total      ?? 0 },
   ]
-
-  const chartData =
-    data?.district_breakdown && data.district_breakdown.length > 0
-      ? data.district_breakdown
-      : PLACEHOLDER_DISTRICTS
 
   return (
     <div className="p-6 space-y-8">
       {/* KPI cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map(kpi => (
           <div
             key={kpi.label}
@@ -138,14 +134,14 @@ function AnalyticsPanel() {
         ))}
       </div>
 
-      {/* District breakdown bar chart */}
+      {/* District breakdown bar chart (placeholder data) */}
       <div>
         <h3 className="text-sm font-semibold text-slate-600 mb-3 uppercase tracking-wide">
-          Request Counts by District
+          Request Counts by District (sample)
         </h3>
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
           <ResponsiveContainer width="100%" height={260}>
-            <BarChart data={chartData} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
+            <BarChart data={PLACEHOLDER_DISTRICTS} margin={{ top: 4, right: 16, left: 0, bottom: 4 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
               <XAxis
                 dataKey="district"
@@ -177,17 +173,9 @@ function AnalyticsPanel() {
 // ── Tab 2 — Users ─────────────────────────────────────────────────────────────
 
 function UsersPanel() {
-  const queryClient = useQueryClient()
-
   const { data: users, isLoading, isError, error } = useQuery<StateUser[]>({
     queryKey: ['state', 'users'],
-    queryFn: () => apiClient.get('/admin/state/users').then(r => r.data),
-  })
-
-  const toggleMutation = useMutation({
-    mutationFn: ({ user_id, is_active }: { user_id: string; is_active: boolean }) =>
-      apiClient.patch(`/admin/state/users/${user_id}/active`, { is_active }).then(r => r.data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['state', 'users'] }),
+    queryFn: () => apiClient.get('/admin/users').then(r => r.data),
   })
 
   if (isLoading) return <LoadingState />
@@ -202,7 +190,7 @@ function UsersPanel() {
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-slate-50 text-left">
-            {['Username', 'Email', 'Role', 'Created', 'Status', 'Action'].map(h => (
+            {['Username', 'Role', 'Jurisdiction', 'Status'].map(h => (
               <th
                 key={h}
                 className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide border-b border-slate-200"
@@ -213,56 +201,29 @@ function UsersPanel() {
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100">
-          {users.map(user => {
-            const isPending =
-              toggleMutation.isPending &&
-              (toggleMutation.variables as { user_id: string } | undefined)?.user_id === user.user_id
-
-            return (
-              <tr key={user.user_id} className="hover:bg-slate-50 transition-colors">
-                <td className="px-4 py-3 font-medium text-slate-800">{user.username}</td>
-                <td className="px-4 py-3 text-slate-600">{user.email}</td>
-                <td className="px-4 py-3">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                    {user.role}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
-                  {new Date(user.created_at).toLocaleDateString()}
-                </td>
-                <td className="px-4 py-3">
-                  <span
-                    className={[
-                      'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium',
-                      user.is_active
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
-                        : 'bg-slate-100 text-slate-500 border border-slate-200',
-                    ].join(' ')}
-                  >
-                    {user.is_active ? 'Active' : 'Inactive'}
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  <button
-                    onClick={() =>
-                      toggleMutation.mutate({ user_id: user.user_id, is_active: !user.is_active })
-                    }
-                    disabled={isPending}
-                    className={[
-                      'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
-                      'focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500',
-                      isPending ? 'opacity-50 cursor-not-allowed' : '',
-                      user.is_active
-                        ? 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                        : 'bg-emerald-600 hover:bg-emerald-700 text-white',
-                    ].join(' ')}
-                  >
-                    {isPending ? '…' : user.is_active ? 'Deactivate' : 'Activate'}
-                  </button>
-                </td>
-              </tr>
-            )
-          })}
+          {users.map(user => (
+            <tr key={user.username} className="hover:bg-slate-50 transition-colors">
+              <td className="px-4 py-3 font-medium text-slate-800">{user.username}</td>
+              <td className="px-4 py-3">
+                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                  {user.role}
+                </span>
+              </td>
+              <td className="px-4 py-3 text-slate-600">{user.jurisdiction ?? '—'}</td>
+              <td className="px-4 py-3">
+                <span
+                  className={[
+                    'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium',
+                    user.is_active
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                      : 'bg-slate-100 text-slate-500 border border-slate-200',
+                  ].join(' ')}
+                >
+                  {user.is_active ? 'Active' : 'Inactive'}
+                </span>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
@@ -271,118 +232,50 @@ function UsersPanel() {
 
 // ── Tab 3 — Adapter ───────────────────────────────────────────────────────────
 
-const STATUS_STYLES: Record<Adapter['status'], string> = {
-  online:  'bg-emerald-50 text-emerald-700 border-emerald-100',
-  offline: 'bg-slate-100 text-slate-500 border-slate-200',
-  error:   'bg-red-50 text-red-600 border-red-100',
-}
-
-const STATUS_DOTS: Record<Adapter['status'], string> = {
-  online:  'bg-emerald-500',
-  offline: 'bg-slate-400',
-  error:   'bg-red-500',
-}
-
 function AdapterPanel() {
-  const queryClient = useQueryClient()
+  const jurisdiction = useAuthStore(s => s.jurisdiction)
 
-  const { data: adapters, isLoading, isError, error } = useQuery<Adapter[]>({
-    queryKey: ['state', 'adapters'],
-    queryFn: () => apiClient.get('/admin/state/adapters').then(r => r.data),
+  const { data: configs, isLoading, isError, error } = useQuery<StateAdapterConfig[]>({
+    queryKey: ['state', 'adapters', jurisdiction],
+    queryFn: () =>
+      apiClient.get(`/admin/state-adapter/${encodeURIComponent(jurisdiction ?? '')}`).then(r => r.data),
+    enabled: !!jurisdiction,
   })
 
-  // Track per-adapter sync loading
-  const [syncingIds, setSyncingIds] = useState<Set<string>>(new Set())
-
-  const syncMutation = useMutation({
-    mutationFn: (adapter_id: string) =>
-      apiClient.post(`/admin/state/adapters/${adapter_id}/sync`).then(r => r.data),
-    onMutate: (adapter_id) => {
-      setSyncingIds(prev => new Set([...prev, adapter_id]))
-    },
-    onSettled: (_data, _err, adapter_id) => {
-      setSyncingIds(prev => {
-        const next = new Set(prev)
-        next.delete(adapter_id)
-        return next
-      })
-      queryClient.invalidateQueries({ queryKey: ['state', 'adapters'] })
-    },
-  })
-
+  if (!jurisdiction) return <ErrorState message="No jurisdiction set for this account." />
   if (isLoading) return <LoadingState />
-  if (isError) return <ErrorState message={(error as Error)?.message ?? 'Failed to load adapters.'} />
+  if (isError) return <ErrorState message={(error as Error)?.message ?? 'Failed to load adapter config.'} />
 
-  if (!adapters || adapters.length === 0) {
-    return <p className="p-6 text-sm text-slate-400">No adapters configured.</p>
+  if (!configs || configs.length === 0) {
+    return <p className="p-6 text-sm text-slate-400">No adapter config found for this state.</p>
   }
 
   return (
-    <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {adapters.map(adapter => {
-        const isSyncing = syncingIds.has(adapter.adapter_id)
-
-        return (
-          <div
-            key={adapter.adapter_id}
-            className="rounded-xl border border-slate-200 bg-slate-50 p-5 flex flex-col gap-3"
-          >
-            {/* Header */}
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <p className="font-semibold text-slate-800 text-sm">{adapter.name}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{adapter.state}</p>
-              </div>
-              <span
-                className={[
-                  'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium border',
-                  STATUS_STYLES[adapter.status],
-                ].join(' ')}
+    <div className="p-6 overflow-x-auto">
+      <table className="w-full text-sm border-collapse">
+        <thead>
+          <tr className="bg-slate-50 text-left">
+            {['Source Field', 'Canonical Field', 'Unit Factor', 'Language'].map(h => (
+              <th
+                key={h}
+                className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide border-b border-slate-200"
               >
-                <span
-                  className={['h-1.5 w-1.5 rounded-full', STATUS_DOTS[adapter.status]].join(' ')}
-                />
-                {adapter.status.charAt(0).toUpperCase() + adapter.status.slice(1)}
-              </span>
-            </div>
-
-            {/* Stats */}
-            <dl className="space-y-1">
-              <div className="flex justify-between text-xs">
-                <dt className="text-slate-500">Last sync</dt>
-                <dd className="text-slate-700 font-medium">
-                  {adapter.last_sync
-                    ? new Date(adapter.last_sync).toLocaleString()
-                    : '—'}
-                </dd>
-              </div>
-              <div className="flex justify-between text-xs">
-                <dt className="text-slate-500">Records synced</dt>
-                <dd className="text-slate-700 font-medium">
-                  {adapter.records_synced !== undefined
-                    ? adapter.records_synced.toLocaleString()
-                    : '—'}
-                </dd>
-              </div>
-            </dl>
-
-            {/* Trigger Sync button */}
-            <button
-              onClick={() => syncMutation.mutate(adapter.adapter_id)}
-              disabled={isSyncing}
-              className={[
-                'mt-auto w-full py-2 rounded-lg text-xs font-semibold transition-colors',
-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500',
-                isSyncing
-                  ? 'bg-emerald-100 text-emerald-400 cursor-not-allowed'
-                  : 'bg-emerald-600 hover:bg-emerald-700 text-white',
-              ].join(' ')}
-            >
-              {isSyncing ? 'Syncing…' : 'Trigger Sync'}
-            </button>
-          </div>
-        )
-      })}
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-100">
+          {configs.map(cfg => (
+            <tr key={cfg.id} className="hover:bg-slate-50 transition-colors">
+              <td className="px-4 py-3 font-mono text-xs text-slate-700">{cfg.source_field_name}</td>
+              <td className="px-4 py-3 font-mono text-xs text-slate-700">{cfg.canonical_field_name}</td>
+              <td className="px-4 py-3 text-slate-600">{cfg.unit_conversion_factor}</td>
+              <td className="px-4 py-3 text-slate-600">{cfg.language_code}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }
@@ -408,7 +301,7 @@ export default function StateAdminPanel() {
         {/* Page heading */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-slate-800">State Admin Panel</h1>
-          <p className="text-sm text-slate-500 mt-1">State oversight, user management, and adapter control</p>
+          <p className="text-sm text-slate-500 mt-1">State oversight, user management, and adapter config</p>
         </div>
 
         {/* Tab strip */}

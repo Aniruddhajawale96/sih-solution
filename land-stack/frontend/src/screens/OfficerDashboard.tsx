@@ -4,20 +4,24 @@ import { TopNav } from '@/components/TopNav'
 import { Footer } from '@/components/Footer'
 import { apiClient } from '@/lib/apiClient'
 
+// Matches the backend WorkflowTask schema from GET /workflow/tasks
 interface WorkflowTask {
-  task_id: string
-  request_id: string
-  service_type: string
+  id: number
   ulpin: string
-  submitted_by?: string
-  assigned_at: string
-  status: 'pending' | 'in_review' | 'approved' | 'rejected'
+  task_type: string
+  assigned_role: string
+  status: string
+  created_at: string
+  resolved_at?: string | null
+  comment?: string | null
 }
 
-const SERVICE_TYPE_LABELS: Record<string, string> = {
+const TASK_TYPE_LABELS: Record<string, string> = {
+  MUTATION: 'Mutation',
   mutation: 'Mutation',
-  encumbrance: 'Encumbrance',
+  REGISTRATION: 'Registration',
   registration: 'Registration',
+  encumbrance: 'Encumbrance',
   building_permission: 'Building Permission',
   tax_assessment: 'Tax Assessment',
   zoning_change: 'Zoning Change',
@@ -43,7 +47,7 @@ interface PendingTasksCardProps {
 
 function PendingTasksCard({ tasks }: PendingTasksCardProps) {
   const navigate = useNavigate()
-  const pending = tasks.filter(t => t.status === 'pending' || t.status === 'in_review')
+  const pending = tasks.filter(t => t.status === 'pending')
 
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden">
@@ -67,40 +71,36 @@ function PendingTasksCard({ tasks }: PendingTasksCardProps) {
             <thead className="bg-slate-50 text-slate-600 uppercase text-xs tracking-wide">
               <tr>
                 <th className="px-4 py-3 text-left font-semibold">Task ID</th>
-                <th className="px-4 py-3 text-left font-semibold">Request ID</th>
-                <th className="px-4 py-3 text-left font-semibold">Service</th>
+                <th className="px-4 py-3 text-left font-semibold">Task Type</th>
                 <th className="px-4 py-3 text-left font-semibold">ULPIN</th>
-                <th className="px-4 py-3 text-left font-semibold">Submitted By</th>
-                <th className="px-4 py-3 text-left font-semibold">Assigned At</th>
+                <th className="px-4 py-3 text-left font-semibold">Assigned Role</th>
+                <th className="px-4 py-3 text-left font-semibold">Created At</th>
                 <th className="px-4 py-3 text-left font-semibold">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {pending.map(task => (
-                <tr key={task.task_id} className="hover:bg-indigo-50 transition-colors">
+                <tr key={task.id} className="hover:bg-indigo-50 transition-colors">
                   <td className="px-4 py-3 font-mono text-xs text-slate-500 whitespace-nowrap">
-                    {task.task_id}
-                  </td>
-                  <td className="px-4 py-3 font-mono text-xs text-slate-500 whitespace-nowrap">
-                    {task.request_id}
+                    #{task.id}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span className="inline-block bg-indigo-100 text-indigo-800 text-xs font-medium px-2 py-0.5 rounded">
-                      {SERVICE_TYPE_LABELS[task.service_type] ?? task.service_type}
+                      {TASK_TYPE_LABELS[task.task_type] ?? task.task_type}
                     </span>
                   </td>
                   <td className="px-4 py-3 font-mono text-xs text-slate-700 whitespace-nowrap">
                     {task.ulpin}
                   </td>
                   <td className="px-4 py-3 text-slate-700 whitespace-nowrap">
-                    {task.submitted_by ?? '—'}
+                    {task.assigned_role}
                   </td>
                   <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
-                    {formatDate(task.assigned_at)}
+                    {formatDate(task.created_at)}
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">
                     <button
-                      onClick={() => navigate(`/officer/workflow?task_id=${encodeURIComponent(task.task_id)}`)}
+                      onClick={() => navigate(`/officer/workflow?task_id=${encodeURIComponent(String(task.id))}`)}
                       className="inline-flex items-center gap-1 bg-indigo-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-indigo-800 transition-colors"
                     >
                       Review →

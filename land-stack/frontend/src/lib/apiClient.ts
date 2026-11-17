@@ -6,7 +6,7 @@ export const apiClient = axios.create({ baseURL: '/api/v1' })
 // ── Request interceptor: attach Bearer token ─────────────────────────────
 apiClient.interceptors.request.use(config => {
   const token = useAuthStore.getState().accessToken
-  if (token) config.headers.Authorization = Bearer 
+  if (token) config.headers.Authorization = `Bearer ${token}`
   return config
 })
 
@@ -49,7 +49,7 @@ apiClient.interceptors.response.use(
             ...useAuthStore.getState(),
             accessToken: newToken,
           })
-          originalRequest.headers.Authorization = Bearer 
+          originalRequest.headers.Authorization = `Bearer ${newToken}`
           return apiClient(originalRequest)
         }
       } catch {

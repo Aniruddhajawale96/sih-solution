@@ -5,7 +5,7 @@ import { Footer } from '@/components/Footer'
 import { apiClient } from '@/lib/apiClient'
 import { useAuthStore, Role } from '@/store/authStore'
 
-function roleToRoute(role: Role  // already replaced): string {
+function roleToRoute(role: Role): string {
   switch (role) {
     case 'CITIZEN':     return '/citizen/services'
     case 'REV_OFF':

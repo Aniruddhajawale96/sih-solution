@@ -5,16 +5,16 @@ import { TopNav } from '@/components/TopNav'
 import { Footer } from '@/components/Footer'
 import { apiClient } from '@/lib/apiClient'
 
-interface TaskDetail {
-  task_id: string
-  request_id: string
-  service_type: string
+// WorkflowTask matches the backend schema from GET /workflow/tasks
+interface WorkflowTask {
+  id: number
   ulpin: string
-  submitted_by?: string
-  submitted_at: string
-  description?: string
+  task_type: string
+  assigned_role: string
   status: string
-  priority?: string
+  created_at: string
+  resolved_at?: string | null
+  comment?: string | null
 }
 
 const SERVICE_TYPE_LABELS: Record<string, string> = {
@@ -24,6 +24,8 @@ const SERVICE_TYPE_LABELS: Record<string, string> = {
   building_permission: 'Building Permission',
   tax_assessment: 'Tax Assessment',
   zoning_change: 'Zoning Change',
+  MUTATION: 'Mutation',
+  REGISTRATION: 'Registration',
 }
 
 function formatDate(iso: string): string {
@@ -59,18 +61,21 @@ export default function WorkflowApproval() {
   const [actionResult, setActionResult] = useState<{ type: 'approve' | 'reject'; ok: boolean } | null>(null)
   const [actionDone, setActionDone] = useState(false)
 
-  const { data: task, isLoading, isError, error } = useQuery<TaskDetail>({
-    queryKey: ['workflow', 'task', taskId],
+  // Fetch all tasks and filter client-side — there is no GET /workflow/tasks/{id} endpoint
+  const { data: tasks, isLoading, isError, error } = useQuery<WorkflowTask[]>({
+    queryKey: ['workflow', 'tasks'],
     queryFn: async () => {
-      const { data } = await apiClient.get<TaskDetail>(`/workflow/tasks/${encodeURIComponent(taskId)}`)
+      const { data } = await apiClient.get<WorkflowTask[]>('/workflow/tasks')
       return data
     },
     enabled: !!taskId,
   })
 
+  const task = tasks?.find(t => String(t.id) === String(taskId)) ?? null
+
   const approveMutation = useMutation({
     mutationFn: async () => {
-      await apiClient.post(`/workflow/tasks/${encodeURIComponent(taskId)}/approve`, { comment })
+      await apiClient.post(`/workflow/${encodeURIComponent(taskId)}/approve`, { comment })
     },
     onSuccess: () => {
       setActionResult({ type: 'approve', ok: true })
@@ -84,7 +89,8 @@ export default function WorkflowApproval() {
 
   const rejectMutation = useMutation({
     mutationFn: async () => {
-      await apiClient.post(`/workflow/tasks/${encodeURIComponent(taskId)}/reject`, { comment })
+      // Backend schema: WorkflowRejectRequest uses "reason", not "comment"
+      await apiClient.post(`/workflow/${encodeURIComponent(taskId)}/reject`, { reason: comment })
     },
     onSuccess: () => {
       setActionResult({ type: 'reject', ok: true })
@@ -149,8 +155,15 @@ export default function WorkflowApproval() {
         {/* Fetch error */}
         {taskId && isError && (
           <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
-            <strong>Failed to load task.</strong>{' '}
+            <strong>Failed to load tasks.</strong>{' '}
             {(error as { message?: string })?.message ?? 'Please try again.'}
+          </div>
+        )}
+
+        {/* Task not found after loading */}
+        {taskId && !isLoading && !isError && tasks && !task && (
+          <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg px-4 py-3 text-sm">
+            Task <span className="font-mono font-semibold">{taskId}</span> was not found in your task list.
           </div>
         )}
 
@@ -161,50 +174,38 @@ export default function WorkflowApproval() {
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-lg font-semibold text-slate-800">Task Detail</h2>
-                <p className="text-xs text-slate-400 font-mono mt-0.5">{task.task_id}</p>
+                <p className="text-xs text-slate-400 font-mono mt-0.5">#{task.id}</p>
               </div>
-              <div className="flex items-center gap-2">
-                {task.priority && (
-                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                    task.priority === 'high'
-                      ? 'bg-red-100 text-red-700'
-                      : task.priority === 'medium'
-                      ? 'bg-yellow-100 text-yellow-700'
-                      : 'bg-slate-100 text-slate-600'
-                  }`}>
-                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} priority
-                  </span>
-                )}
-                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                  task.status === 'pending'
-                    ? 'bg-yellow-100 text-yellow-700'
-                    : task.status === 'in_review'
-                    ? 'bg-blue-100 text-blue-700'
-                    : task.status === 'approved'
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-red-100 text-red-700'
-                }`}>
-                  {task.status.replace('_', ' ')}
-                </span>
-              </div>
+              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                task.status === 'pending'
+                  ? 'bg-yellow-100 text-yellow-700'
+                  : task.status === 'approved'
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-red-100 text-red-700'
+              }`}>
+                {task.status}
+              </span>
             </div>
 
             {/* Detail rows */}
             <div className="px-6 py-2">
-              <DetailRow label="Request ID" value={<span className="font-mono">{task.request_id}</span>} />
+              <DetailRow label="Task ID" value={<span className="font-mono">{task.id}</span>} />
               <DetailRow
-                label="Service Type"
+                label="Task Type"
                 value={
                   <span className="inline-block bg-indigo-100 text-indigo-800 text-xs font-medium px-2 py-0.5 rounded">
-                    {SERVICE_TYPE_LABELS[task.service_type] ?? task.service_type}
+                    {SERVICE_TYPE_LABELS[task.task_type] ?? task.task_type}
                   </span>
                 }
               />
               <DetailRow label="ULPIN" value={<span className="font-mono">{task.ulpin}</span>} />
-              <DetailRow label="Submitted By" value={task.submitted_by ?? '—'} />
-              <DetailRow label="Submitted At" value={formatDate(task.submitted_at)} />
-              {task.description && (
-                <DetailRow label="Description" value={task.description} />
+              <DetailRow label="Assigned Role" value={task.assigned_role} />
+              <DetailRow label="Created At" value={formatDate(task.created_at)} />
+              {task.resolved_at && (
+                <DetailRow label="Resolved At" value={formatDate(task.resolved_at)} />
+              )}
+              {task.comment && (
+                <DetailRow label="Comment" value={task.comment} />
               )}
             </div>
 
