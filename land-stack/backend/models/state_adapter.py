@@ -8,7 +8,7 @@ enabling the ingestion pipeline to normalise data from any state's source system
 from sqlalchemy import Float, Index, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from backend.core.database import Base
+from core.database import Base
 
 
 class StateAdapterConfig(Base):

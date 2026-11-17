@@ -11,7 +11,7 @@ and NATL_ADMIN who have no geographic restriction.
 from sqlalchemy import Boolean, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from backend.core.database import Base
+from core.database import Base
 
 
 class User(Base):

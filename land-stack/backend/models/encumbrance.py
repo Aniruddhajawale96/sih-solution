@@ -10,7 +10,7 @@ from datetime import date
 from sqlalchemy import Date, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from backend.core.database import Base
+from core.database import Base
 
 
 class Encumbrance(Base):

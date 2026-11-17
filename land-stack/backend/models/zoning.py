@@ -9,7 +9,7 @@ invariant is enforced by the router/ML layer, not a DB constraint.
 from sqlalchemy import Boolean, Float, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from backend.core.database import Base
+from core.database import Base
 
 
 class Zoning(Base):

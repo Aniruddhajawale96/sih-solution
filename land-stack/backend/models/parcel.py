@@ -10,7 +10,7 @@ from geoalchemy2 import Geometry
 from sqlalchemy import DateTime, Float, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from backend.core.database import Base
+from core.database import Base
 
 
 class Parcel(Base):
