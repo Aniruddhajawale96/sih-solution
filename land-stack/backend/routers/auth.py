@@ -5,7 +5,10 @@ POST /auth/login    — verify credentials; return access + refresh tokens
 POST /auth/refresh  — issue a new access token from a valid refresh token
 POST /auth/logout   — blacklist both tokens' JTIs in Redis
 
-All responses are wrapped in Envelope[T] using ok() / err() helpers.
+All responses are wrapped in the Envelope[T] schema: success paths return
+``ok(data)`` directly; failure paths raise ``HTTPException`` whose status code
+and detail the global exception handler (main.py) converts into an Envelope
+with the matching HTTP status (e.g. 401 → code "UNAUTHORIZED").
 Requirements: 4.1, 4.2, 4.3
 """
 
@@ -13,7 +16,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from jose import JWTError, jwt
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -33,7 +36,7 @@ from core.auth import (
 from core.database import get_db
 from core.redis_client import get_redis
 from core.rbac import get_current_user, oauth2_scheme
-from core.schemas import Envelope, err, ok
+from core.schemas import Envelope, ok
 from core.response_schemas import LoginRequest, LoginResponse, RefreshRequest, RefreshResponse
 from models.users import User
 
@@ -65,10 +68,16 @@ async def login(
     user: User | None = result.scalar_one_or_none()
 
     if user is None or not verify_password(body.password, user.hashed_password):
-        return err(code="UNAUTHORIZED", message="Invalid username or password")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid username or password",
+        )
 
     if not user.is_active:
-        return err(code="FORBIDDEN", message="Account is disabled")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Account is disabled",
+        )
 
     token_data = {
         "sub": user.username,
@@ -109,13 +118,17 @@ async def refresh(
     Raises 401 if the refresh token is expired, invalid, blacklisted, or is
     not of type "refresh".
     """
-    try:
-        payload = await verify_token(body.refresh_token, redis)
-    except Exception:
-        return err(code="UNAUTHORIZED", message="Invalid or expired refresh token")
+    # verify_token raises HTTPException(401) when the refresh token is invalid,
+    # expired, or blacklisted. The global handler (main.http_exception_handler)
+    # converts that into an Envelope with the correct HTTP status, preserving
+    # the "envelope on every response" contract.
+    payload = await verify_token(body.refresh_token, redis)
 
     if payload.get("type") != "refresh":
-        return err(code="UNAUTHORIZED", message="Provided token is not a refresh token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Provided token is not a refresh token",
+        )
 
     token_data = {
         "sub": payload.get("sub"),
