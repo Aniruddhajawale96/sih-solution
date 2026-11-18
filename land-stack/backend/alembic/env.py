@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 """
 Alembic environment for Land Stack backend.
 
