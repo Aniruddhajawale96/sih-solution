@@ -9,7 +9,7 @@ services:
     ports: ["5432:5432"]
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ../seed-data:/docker-entrypoint-initdb.d
+      - ./seed-data:/docker-entrypoint-initdb.d
 
   pg_tileserv:
     image: pramsey/pg_tileserv:latest
@@ -31,9 +31,9 @@ services:
     ports: ["9000:9000", "9001:9001"]
 
   backend:
-    build: ../backend
+    build: ./backend
     environment:
-      DATABASE_URL: postgresql+psycopg2://landstack:landstack@postgres:5432/landstack
+      DATABASE_URL: postgresql+asyncpg://landstack:landstack@postgres:5432/landstack
       REDIS_URL: redis://redis:6379
       JWT_SECRET: devsecret
       MINIO_ENDPOINT: minio:9000
@@ -44,7 +44,7 @@ services:
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
   frontend:
-    build: ../frontend
+    build: ./frontend
     ports: ["3000:3000"]
     depends_on: [backend]
 
